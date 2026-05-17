@@ -55,6 +55,8 @@ OPEN LINK
 
 <script>
 
+let currentPeriod = 0;
+
 function updateClock(){
 
 const now = new Date();
@@ -77,7 +79,7 @@ h + ":" + m + ":" + s + " " + ampm;
 
 }
 
-function updatePeriod(){
+function calculatePeriod(){
 
 const now = new Date();
 
@@ -90,19 +92,35 @@ start.setDate(start.getDate()-1);
 }
 
 const diff =
-Math.floor((now - start)/60000);
+Math.floor((now - start)/60000) + 1;
+
+return diff;
+
+}
+
+function updateResult(){
+
+currentPeriod = calculatePeriod();
 
 document.getElementById("period").innerHTML =
-"PERIOD : " + String(diff).padStart(4,'0');
+"PERIOD : " +
+String(currentPeriod).padStart(4,'0');
 
 const num = Math.floor(Math.random()*10);
 
-document.getElementById("number").innerHTML = num;
+document.getElementById("number").innerHTML =
+num;
 
 if(num <= 4){
-document.getElementById("size").innerHTML = "SMALL";
+
+document.getElementById("size").innerHTML =
+"SMALL";
+
 }else{
-document.getElementById("size").innerHTML = "BIG";
+
+document.getElementById("size").innerHTML =
+"BIG";
+
 }
 
 }
@@ -116,20 +134,17 @@ const sec = 60 - now.getSeconds();
 document.getElementById("timer").innerHTML =
 "NEXT UPDATE : " + sec + " SEC";
 
+if(sec === 60 || sec === 0){
+updateResult();
+}
+
 }
 
 updateClock();
-updatePeriod();
+updateResult();
 updateTimer();
 
 setInterval(updateClock,1000);
 setInterval(updateTimer,1000);
 
-setInterval(()=>{
-updatePeriod();
-},60000);
-
 </script>
-
-</body>
-</html>
