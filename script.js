@@ -1,53 +1,32 @@
-
-// Firebase SDK REQUIRED
-// Replace firebaseConfig with your own Firebase project keys
-
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const db = firebase.firestore();
+function getUIDs(){
+return JSON.parse(localStorage.getItem("uids") || "[]");
+}
 
 function verifyUID(){
 
-const uid = document.getElementById("uid").value;
+const uid=document.getElementById("uid").value.trim();
 
-db.collection("approvedUIDs")
-.doc(uid)
-.get()
-.then((doc)=>{
+const uids=getUIDs();
 
-if(doc.exists){
+if(uid===""){
+document.getElementById("msg").innerHTML="ENTER UID";
+return;
+}
 
-document.getElementById("result").innerHTML =
-"LOGIN SUCCESSFUL FULL ACTIVE";
+if(uids.includes(uid)){
 
-db.collection("onlineUsers")
-.doc(uid)
-.set({
-uid:uid,
-status:"online",
-lastActive:new Date().toLocaleString()
-});
+document.getElementById("msg").innerHTML=
+"LOGIN SUCCESSFUL";
 
 setTimeout(()=>{
 window.location="dashboard.html";
-},1200);
+},1000);
 
 }else{
 
-document.getElementById("result").innerHTML =
+document.getElementById("msg").innerHTML=
 "UID NOT VERIFIED";
 
 }
-
-});
 
 }

@@ -2,149 +2,50 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBER DASHBOARD</title>
+<title>DASHBOARD</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<div class="matrix"></div>
-
-<div class="panel">
-
+<div class="container">
 <h1>FULL ACTIVE SUCCESSFUL</h1>
-
-<div class="clock-box">
-<h2 id="wallclock">00:00:00</h2>
-</div>
-
-<div class="period-card">
-
-<h2 id="period">PERIOD : 0000</h2>
-
-<div class="number-glow">
-<h1 id="number">0</h1>
-</div>
-
-<h2 id="size">SMALL</h2>
-
-<p id="timer">NEXT UPDATE : 60 SEC</p>
-
-</div>
-
-<div class="cyber-grid">
-<div class="box">FIREWALL : ACTIVE</div>
-<div class="box">NODE : CONNECTED</div>
-<div class="box">SERVER : ONLINE</div>
-<div class="box">STATUS : STABLE</div>
-</div>
-
-<div class="terminal">
-<p>> Monitoring cyber traffic...</p>
-<p>> Active panel synchronized...</p>
-<p>> Result engine secured...</p>
-<p>> Live refresh active...</p>
-</div>
-
-<a class="join-btn"
-href="https://www.jaiclub18.com/#/register?invitationCode=377572996558"
-target="_blank">
-OPEN LINK
-</a>
-
+<h2 id="clock"></h2>
+<h2 id="period"></h2>
+<h1 id="num"></h1>
+<h2 id="size"></h2>
 </div>
 
 <script>
+function update(){
 
-let currentPeriod = 0;
+const now=new Date();
 
-function updateClock(){
+document.getElementById("clock").innerHTML=
+now.toLocaleTimeString();
 
-const now = new Date();
-
-let h = now.getHours();
-let m = now.getMinutes();
-let s = now.getSeconds();
-
-let ampm = h >= 12 ? "PM" : "AM";
-
-h = h % 12;
-h = h ? h : 12;
-
-h = String(h).padStart(2,'0');
-m = String(m).padStart(2,'0');
-s = String(s).padStart(2,'0');
-
-document.getElementById("wallclock").innerHTML =
-h + ":" + m + ":" + s + " " + ampm;
-
-}
-
-function calculatePeriod(){
-
-const now = new Date();
-
-let start = new Date(now);
-
+let start=new Date(now);
 start.setHours(5,30,0,0);
 
-if(now < start){
+if(now<start){
 start.setDate(start.getDate()-1);
 }
 
-const diff =
-Math.floor((now - start)/60000) + 1;
+const period=Math.floor((now-start)/60000)+1;
 
-return diff;
+document.getElementById("period").innerHTML=
+"PERIOD : "+period;
 
-}
+const n=Math.floor(Math.random()*10);
 
-function updateResult(){
+document.getElementById("num").innerHTML=n;
 
-currentPeriod = calculatePeriod();
-
-document.getElementById("period").innerHTML =
-"PERIOD : " +
-String(currentPeriod).padStart(4,'0');
-
-const num = Math.floor(Math.random()*10);
-
-document.getElementById("number").innerHTML =
-num;
-
-if(num <= 4){
-
-document.getElementById("size").innerHTML =
-"SMALL";
-
-}else{
-
-document.getElementById("size").innerHTML =
-"BIG";
+document.getElementById("size").innerHTML=
+n<=4?"SMALL":"BIG";
 
 }
 
-}
-
-function updateTimer(){
-
-const now = new Date();
-
-const sec = 60 - now.getSeconds();
-
-document.getElementById("timer").innerHTML =
-"NEXT UPDATE : " + sec + " SEC";
-
-if(sec === 60 || sec === 0){
-updateResult();
-}
-
-}
-
-updateClock();
-updateResult();
-updateTimer();
-
-setInterval(updateClock,1000);
-setInterval(updateTimer,1000);
-
+update();
+setInterval(update,1000);
 </script>
+
+</body>
+</html>

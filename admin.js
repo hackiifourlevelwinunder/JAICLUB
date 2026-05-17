@@ -1,89 +1,65 @@
+function getUIDs(){
+return JSON.parse(localStorage.getItem("uids") || "[]");
+}
 
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
+function saveUIDs(arr){
+localStorage.setItem("uids",JSON.stringify(arr));
+}
 
-firebase.initializeApp(firebaseConfig);
+function render(){
 
-const db = firebase.firestore();
+const list=document.getElementById("list");
+
+list.innerHTML="";
+
+const uids=getUIDs();
+
+uids.forEach(uid=>{
+
+list.innerHTML += `<li>${uid}</li>`;
+
+});
+
+}
 
 function addUID(){
 
-const uid =
-document.getElementById("newUID").value;
+const uid=document.getElementById("newuid").value.trim();
 
-if(uid.trim()===""){
+if(uid===""){
+alert("ENTER UID");
 return;
 }
 
-db.collection("approvedUIDs")
-.doc(uid)
-.set({
-uid:uid,
-approved:true,
-time:new Date().toLocaleString()
-});
+let uids=getUIDs();
 
-document.getElementById("newUID").value="";
+if(!uids.includes(uid)){
+uids.push(uid);
+saveUIDs(uids);
+}
+
+document.getElementById("newuid").value="";
+
+render();
+
+alert("UID APPROVED");
 
 }
 
 function removeUID(){
 
-const uid =
-document.getElementById("newUID").value;
+const uid=document.getElementById("newuid").value.trim();
 
-db.collection("approvedUIDs")
-.doc(uid)
-.delete();
+let uids=getUIDs();
 
-}
+uids=uids.filter(x=>x!==uid);
 
-function loadUIDs(){
+saveUIDs(uids);
 
-db.collection("approvedUIDs")
-.onSnapshot((snapshot)=>{
+render();
 
-const list =
-document.getElementById("uidList");
-
-list.innerHTML="";
-
-let count=0;
-
-snapshot.forEach((doc)=>{
-
-count++;
-
-list.innerHTML += `
-<li>${doc.data().uid}</li>
-`;
-
-});
-
-document.getElementById("totalUID").innerHTML =
-count;
-
-});
+alert("UID REMOVED");
 
 }
 
-function loadOnlineUsers(){
-
-db.collection("onlineUsers")
-.onSnapshot((snapshot)=>{
-
-document.getElementById("onlineUsers")
-.innerHTML = snapshot.size;
-
-});
-
-}
-
-loadUIDs();
-loadOnlineUsers();
+render();
