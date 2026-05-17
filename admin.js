@@ -1,103 +1,112 @@
 
-function getUIDs(){
-try{
-return JSON.parse(localStorage.getItem("approvedUIDs")) || [];
-}catch(e){
-return [];
-}
-}
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey: "PUT_API_KEY",
+  authDomain: "PUT_AUTH_DOMAIN",
+  projectId: "PUT_PROJECT_ID",
+  storageBucket: "PUT_STORAGE_BUCKET",
+  messagingSenderId: "PUT_SENDER_ID",
+  appId: "PUT_APP_ID"
+};
 
-function saveUIDs(data){
-localStorage.setItem("approvedUIDs", JSON.stringify(data));
-}
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-function renderUIDs(){
-
-const list = document.getElementById("uidList");
-if(!list) return;
-
-list.innerHTML = "";
-
-const uids = getUIDs();
-
-uids.forEach((uid)=>{
-
-list.innerHTML += `
-<li>${uid}</li>
-`;
-
-});
-
-const total = document.getElementById("totalUID");
-if(total){
-total.innerHTML = uids.length;
-}
-
-const online = document.getElementById("onlineUsers");
-if(online){
-online.innerHTML = uids.length;
-}
-
-}
-
+// ===== APPROVE UID =====
 function addUID(){
 
-const input = document.getElementById("newUID");
-
-if(!input) return;
-
-const uid = input.value.trim();
+const uid =
+document.getElementById("newUID").value.trim();
 
 if(uid === ""){
 alert("ENTER UID");
 return;
 }
 
-let uids = getUIDs();
+db.collection("approvedUIDs")
+.doc(uid)
+.set({
+uid:uid,
+approved:true,
+time:new Date().toLocaleString()
+});
 
-if(!uids.includes(uid)){
-uids.push(uid);
-saveUIDs(uids);
+document.getElementById("newUID").value = "";
+
+alert("UID APPROVED");
+
 }
 
-input.value = "";
-
-renderUIDs();
-
-alert("UID APPROVED SUCCESSFULLY");
-
-}
-
+// ===== REMOVE UID =====
 function removeUID(){
 
-const input = document.getElementById("newUID");
+const uid =
+document.getElementById("newUID").value.trim();
 
-if(!input) return;
-
-const uid = input.value.trim();
-
-let uids = getUIDs();
-
-uids = uids.filter(item => item !== uid);
-
-saveUIDs(uids);
-
-renderUIDs();
-
-input.value = "";
+db.collection("approvedUIDs")
+.doc(uid)
+.delete();
 
 alert("UID REMOVED");
 
 }
 
-function clearAll(){
+// ===== LOAD UID =====
+function loadUIDs(){
 
-localStorage.removeItem("approvedUIDs");
+db.collection("approvedUIDs")
+.onSnapshot((snapshot)=>{
 
-renderUIDs();
+const list =
+document.getElementById("uidList");
 
-alert("ALL UID CLEARED");
+if(list){
+list.innerHTML = "";
+}
+
+let total = 0;
+
+snapshot.forEach((doc)=>{
+
+total++;
+
+if(list){
+list.innerHTML += `
+<li>${doc.data().uid}</li>
+`;
+}
+
+});
+
+const totalUID =
+document.getElementById("totalUID");
+
+if(totalUID){
+totalUID.innerHTML = total;
+}
+
+});
 
 }
 
-window.onload = renderUIDs;
+// ===== LOAD ONLINE =====
+function loadOnline(){
+
+db.collection("onlineUsers")
+.onSnapshot((snapshot)=>{
+
+const online =
+document.getElementById("onlineUsers");
+
+if(online){
+online.innerHTML = snapshot.size;
+}
+
+});
+
+}
+
+window.onload = ()=>{
+loadUIDs();
+loadOnline();
+};

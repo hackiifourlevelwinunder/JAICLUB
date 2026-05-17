@@ -1,12 +1,18 @@
 
-function getUIDs(){
-try{
-return JSON.parse(localStorage.getItem("approvedUIDs")) || [];
-}catch(e){
-return [];
-}
-}
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey: "PUT_API_KEY",
+  authDomain: "PUT_AUTH_DOMAIN",
+  projectId: "PUT_PROJECT_ID",
+  storageBucket: "PUT_STORAGE_BUCKET",
+  messagingSenderId: "PUT_SENDER_ID",
+  appId: "PUT_APP_ID"
+};
 
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ===== VERIFY UID =====
 function verifyUID(){
 
 const uid = document.getElementById("uid").value.trim();
@@ -17,18 +23,28 @@ document.getElementById("result").innerHTML =
 return;
 }
 
-const approvedUIDs = getUIDs();
+db.collection("approvedUIDs")
+.doc(uid)
+.get()
+.then((doc)=>{
 
-if(approvedUIDs.includes(uid)){
+if(doc.exists){
 
 document.getElementById("result").innerHTML =
 "LOGIN SUCCESSFUL FULL ACTIVE";
 
-localStorage.setItem("activeUser", uid);
+db.collection("onlineUsers")
+.doc(uid)
+.set({
+uid:uid,
+status:"online",
+time:new Date().toLocaleString(),
+browser:navigator.userAgent
+});
 
 setTimeout(()=>{
-window.location.href = "dashboard.html";
-},1200);
+window.location.href="dashboard.html";
+},1000);
 
 }else{
 
@@ -36,5 +52,7 @@ document.getElementById("result").innerHTML =
 "UID NOT VERIFIED";
 
 }
+
+});
 
 }

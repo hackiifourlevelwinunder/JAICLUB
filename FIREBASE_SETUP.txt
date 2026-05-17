@@ -1,0 +1,29 @@
+
+FIREBASE FULL SETUP
+
+1. Open:
+https://console.firebase.google.com
+
+2. Create Project
+
+3. Build -> Firestore Database
+Enable Database
+
+4. Project Settings -> General
+
+5. Copy Firebase Config
+
+6. Replace in:
+- script.js
+- admin.js
+
+7. Deploy again on Render
+
+NOW FEATURES:
+✔ All browsers work
+✔ All devices work
+✔ Chrome / Brave / Firefox / Edge sync
+✔ Instant UID approval
+✔ Realtime online users
+✔ Same UI preserved
+✔ No UI removed
