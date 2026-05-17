@@ -1,30 +1,38 @@
+
 function getUIDs(){
-return JSON.parse(localStorage.getItem("uids") || "[]");
+try{
+return JSON.parse(localStorage.getItem("approvedUIDs")) || [];
+}catch(e){
+return [];
+}
 }
 
 function verifyUID(){
 
-const uid=document.getElementById("uid").value.trim();
+const uid = document.getElementById("uid").value.trim();
 
-const uids=getUIDs();
-
-if(uid===""){
-document.getElementById("msg").innerHTML="ENTER UID";
+if(uid === ""){
+document.getElementById("result").innerHTML =
+"ENTER UID";
 return;
 }
 
-if(uids.includes(uid)){
+const approvedUIDs = getUIDs();
 
-document.getElementById("msg").innerHTML=
-"LOGIN SUCCESSFUL";
+if(approvedUIDs.includes(uid)){
+
+document.getElementById("result").innerHTML =
+"LOGIN SUCCESSFUL FULL ACTIVE";
+
+localStorage.setItem("activeUser", uid);
 
 setTimeout(()=>{
-window.location="dashboard.html";
-},1000);
+window.location.href = "dashboard.html";
+},1200);
 
 }else{
 
-document.getElementById("msg").innerHTML=
+document.getElementById("result").innerHTML =
 "UID NOT VERIFIED";
 
 }

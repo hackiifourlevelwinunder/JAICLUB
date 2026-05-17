@@ -1,65 +1,103 @@
+
 function getUIDs(){
-return JSON.parse(localStorage.getItem("uids") || "[]");
+try{
+return JSON.parse(localStorage.getItem("approvedUIDs")) || [];
+}catch(e){
+return [];
+}
 }
 
-function saveUIDs(arr){
-localStorage.setItem("uids",JSON.stringify(arr));
+function saveUIDs(data){
+localStorage.setItem("approvedUIDs", JSON.stringify(data));
 }
 
-function render(){
+function renderUIDs(){
 
-const list=document.getElementById("list");
+const list = document.getElementById("uidList");
+if(!list) return;
 
-list.innerHTML="";
+list.innerHTML = "";
 
-const uids=getUIDs();
+const uids = getUIDs();
 
-uids.forEach(uid=>{
+uids.forEach((uid)=>{
 
-list.innerHTML += `<li>${uid}</li>`;
+list.innerHTML += `
+<li>${uid}</li>
+`;
 
 });
+
+const total = document.getElementById("totalUID");
+if(total){
+total.innerHTML = uids.length;
+}
+
+const online = document.getElementById("onlineUsers");
+if(online){
+online.innerHTML = uids.length;
+}
 
 }
 
 function addUID(){
 
-const uid=document.getElementById("newuid").value.trim();
+const input = document.getElementById("newUID");
 
-if(uid===""){
+if(!input) return;
+
+const uid = input.value.trim();
+
+if(uid === ""){
 alert("ENTER UID");
 return;
 }
 
-let uids=getUIDs();
+let uids = getUIDs();
 
 if(!uids.includes(uid)){
 uids.push(uid);
 saveUIDs(uids);
 }
 
-document.getElementById("newuid").value="";
+input.value = "";
 
-render();
+renderUIDs();
 
-alert("UID APPROVED");
+alert("UID APPROVED SUCCESSFULLY");
 
 }
 
 function removeUID(){
 
-const uid=document.getElementById("newuid").value.trim();
+const input = document.getElementById("newUID");
 
-let uids=getUIDs();
+if(!input) return;
 
-uids=uids.filter(x=>x!==uid);
+const uid = input.value.trim();
+
+let uids = getUIDs();
+
+uids = uids.filter(item => item !== uid);
 
 saveUIDs(uids);
 
-render();
+renderUIDs();
+
+input.value = "";
 
 alert("UID REMOVED");
 
 }
 
-render();
+function clearAll(){
+
+localStorage.removeItem("approvedUIDs");
+
+renderUIDs();
+
+alert("ALL UID CLEARED");
+
+}
+
+window.onload = renderUIDs;

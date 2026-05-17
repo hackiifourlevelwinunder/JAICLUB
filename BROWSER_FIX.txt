@@ -1,0 +1,23 @@
+
+CROSS BROWSER FIX
+
+NOW WORKS BETTER ON:
+- Chrome
+- Brave
+- Edge
+- Firefox
+- Kiwi
+- Samsung Internet
+
+IMPORTANT:
+localStorage only works on SAME browser/device.
+
+For ALL devices + ALL browsers realtime sync,
+you need Firebase backend.
+
+Current fix improves:
+- UID approve
+- UID remove
+- Verification errors
+- Browser compatibility
+- Redirect issues
