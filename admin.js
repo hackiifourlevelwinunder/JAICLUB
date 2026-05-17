@@ -1,51 +1,35 @@
-let uidArray =
-JSON.parse(localStorage.getItem("uids")) || [];
 
-function saveData(){
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
 
-localStorage.setItem(
-"uids",
-JSON.stringify(uidArray)
-);
+firebase.initializeApp(firebaseConfig);
 
-}
-
-function showUIDs(){
-
-const list =
-document.getElementById("uidList");
-
-list.innerHTML = "";
-
-uidArray.forEach((uid)=>{
-
-list.innerHTML += `
-<li>${uid}</li>
-`;
-
-});
-
-document.getElementById("totalUID")
-.innerHTML = uidArray.length;
-
-}
+const db = firebase.firestore();
 
 function addUID(){
 
 const uid =
 document.getElementById("newUID").value;
 
-if(uid.trim() === ""){
-alert("ENTER UID");
+if(uid.trim()===""){
 return;
 }
 
-uidArray.push(uid);
+db.collection("approvedUIDs")
+.doc(uid)
+.set({
+uid:uid,
+approved:true,
+time:new Date().toLocaleString()
+});
 
-saveData();
-showUIDs();
-
-document.getElementById("newUID").value = "";
+document.getElementById("newUID").value="";
 
 }
 
@@ -54,26 +38,52 @@ function removeUID(){
 const uid =
 document.getElementById("newUID").value;
 
-uidArray = uidArray.filter(
-item => item !== uid
-);
-
-saveData();
-showUIDs();
+db.collection("approvedUIDs")
+.doc(uid)
+.delete();
 
 }
 
-function clearAll(){
+function loadUIDs(){
 
-if(confirm("DELETE ALL UID?")){
+db.collection("approvedUIDs")
+.onSnapshot((snapshot)=>{
 
-uidArray = [];
+const list =
+document.getElementById("uidList");
 
-saveData();
-showUIDs();
+list.innerHTML="";
+
+let count=0;
+
+snapshot.forEach((doc)=>{
+
+count++;
+
+list.innerHTML += `
+<li>${doc.data().uid}</li>
+`;
+
+});
+
+document.getElementById("totalUID").innerHTML =
+count;
+
+});
 
 }
 
+function loadOnlineUsers(){
+
+db.collection("onlineUsers")
+.onSnapshot((snapshot)=>{
+
+document.getElementById("onlineUsers")
+.innerHTML = snapshot.size;
+
+});
+
 }
 
-showUIDs();
+loadUIDs();
+loadOnlineUsers();

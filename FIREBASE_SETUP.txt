@@ -1,0 +1,20 @@
+
+REALTIME FIX ADDED
+
+NOW:
+- UID approval works across browsers/devices
+- Online users update instantly
+- Admin panel sync realtime
+- Firebase Firestore required
+
+SETUP:
+1. Create Firebase project
+2. Enable Firestore Database
+3. Replace firebaseConfig keys in:
+   - script.js
+   - admin.js
+4. Deploy again on Render
+
+Firestore Collections:
+approvedUIDs
+onlineUsers
