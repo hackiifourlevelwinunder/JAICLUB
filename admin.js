@@ -1,18 +1,18 @@
 
-// ===== FIREBASE CONFIG =====
 const firebaseConfig = {
-  apiKey: "PUT_API_KEY",
-  authDomain: "PUT_AUTH_DOMAIN",
-  projectId: "PUT_PROJECT_ID",
-  storageBucket: "PUT_STORAGE_BUCKET",
-  messagingSenderId: "PUT_SENDER_ID",
-  appId: "PUT_APP_ID"
+  apiKey: "AIzaSyDmAmd9yqMYCnlAkgFzzQR9jur6lASytgI",
+  authDomain: "hakciii.firebaseapp.com",
+  projectId: "hakciii",
+  storageBucket: "hakciii.firebasestorage.app",
+  messagingSenderId: "363421007677",
+  appId: "1:363421007677:web:7f0b76549293bffab98f54",
+  measurementId: "G-01B8F2DGZP"
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.firestore();
 
-// ===== APPROVE UID =====
 function addUID(){
 
 const uid =
@@ -37,7 +37,6 @@ alert("UID APPROVED");
 
 }
 
-// ===== REMOVE UID =====
 function removeUID(){
 
 const uid =
@@ -51,7 +50,6 @@ alert("UID REMOVED");
 
 }
 
-// ===== LOAD UID =====
 function loadUIDs(){
 
 db.collection("approvedUIDs")
@@ -60,9 +58,7 @@ db.collection("approvedUIDs")
 const list =
 document.getElementById("uidList");
 
-if(list){
 list.innerHTML = "";
-}
 
 let total = 0;
 
@@ -70,43 +66,25 @@ snapshot.forEach((doc)=>{
 
 total++;
 
-if(list){
 list.innerHTML += `
 <li>${doc.data().uid}</li>
 `;
-}
 
 });
 
-const totalUID =
-document.getElementById("totalUID");
-
-if(totalUID){
-totalUID.innerHTML = total;
-}
+document.getElementById("totalUID").innerHTML =
+total;
 
 });
-
-}
-
-// ===== LOAD ONLINE =====
-function loadOnline(){
 
 db.collection("onlineUsers")
 .onSnapshot((snapshot)=>{
 
-const online =
-document.getElementById("onlineUsers");
-
-if(online){
-online.innerHTML = snapshot.size;
-}
+document.getElementById("onlineUsers").innerHTML =
+snapshot.size;
 
 });
 
 }
 
-window.onload = ()=>{
-loadUIDs();
-loadOnline();
-};
+window.onload = loadUIDs;
