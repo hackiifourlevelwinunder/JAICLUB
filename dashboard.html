@@ -25,6 +25,8 @@ min-height:100vh;
 padding:8px;
 }
 
+/* BACKGROUND */
+
 .matrix{
 position:fixed;
 width:100%;
@@ -42,12 +44,14 @@ z-index:0;
 100%{transform:translateY(28px);}
 }
 
+/* PANEL */
+
 .panel{
 position:relative;
 z-index:1;
 width:100%;
 max-width:390px;
-background:rgba(0,0,0,0.90);
+background:rgba(0,0,0,0.92);
 border:2px solid #00ff99;
 border-radius:18px;
 padding:16px;
@@ -61,6 +65,8 @@ margin-bottom:16px;
 text-shadow:0 0 14px #00ff99;
 }
 
+/* CLOCK */
+
 .clock-box{
 padding:14px;
 border:1px solid #00ff99;
@@ -73,6 +79,8 @@ box-shadow:0 0 16px #00ff99;
 font-size:30px;
 font-weight:bold;
 }
+
+/* CARD */
 
 .period-card{
 padding:18px;
@@ -88,6 +96,8 @@ font-weight:bold;
 margin-bottom:18px;
 text-shadow:0 0 14px #00ff99;
 }
+
+/* NUMBER */
 
 .number-glow{
 margin:16px auto;
@@ -136,6 +146,8 @@ font-size:16px;
 font-weight:bold;
 }
 
+/* GRID */
+
 .cyber-grid{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -152,6 +164,8 @@ font-size:13px;
 font-weight:bold;
 box-shadow:0 0 10px rgba(0,255,120,0.4);
 }
+
+/* TERMINAL */
 
 .terminal{
 text-align:left;
@@ -171,6 +185,8 @@ margin-bottom:8px;
 color:#00ff99;
 font-weight:bold;
 }
+
+/* BUTTON */
 
 .join-btn{
 display:inline-block;
@@ -237,16 +253,17 @@ OPEN LINK
 <script>
 
 /* =========================
-   API FIXED VERSION
+   WORKING API
 ========================= */
 
-/*
-DIRECT API often blocks browser because of CORS.
-So proxy use kiya gaya hai.
-*/
-
 const API =
-"https://api.allorigins.win/raw?url=https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
+"https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
+
+/* CORS FIX */
+
+const PROXY =
+"https://api.allorigins.win/raw?url=" +
+encodeURIComponent(API);
 
 let lastPeriod = "";
 
@@ -260,14 +277,17 @@ let h = now.getHours();
 let m = now.getMinutes();
 let s = now.getSeconds();
 
-let ampm = h >= 12 ? "PM" : "AM";
+let ampm =
+h >= 12
+? "PM"
+: "AM";
 
 h = h % 12;
 h = h ? h : 12;
 
-h = String(h).padStart(2,'0');
-m = String(m).padStart(2,'0');
-s = String(s).padStart(2,'0');
+h = String(h).padStart(2,"0");
+m = String(m).padStart(2,"0");
+s = String(s).padStart(2,"0");
 
 document.getElementById("wallclock").innerHTML =
 `${h}:${m}:${s} ${ampm}`;
@@ -284,11 +304,14 @@ document.getElementById("terminal");
 const p =
 document.createElement("p");
 
-p.innerHTML = "> " + text;
+p.innerHTML =
+"> " + text;
 
 terminal.prepend(p);
 
-if(terminal.children.length > 25){
+if(
+terminal.children.length > 25
+){
 
 terminal.removeChild(
 terminal.lastChild
@@ -310,22 +333,24 @@ return String(
 
 }
 
-/* SMART ANALYSIS */
+/* ANALYSIS */
 
-function smartPattern(history){
+function smartPredict(history){
 
 let results = [];
 
+/* LAST 20 */
+
 for(
 let i=0;
-i<Math.min(30,history.length);
+i<Math.min(20,history.length);
 i++
 ){
 
 results.push(
 Number(
-history[i].number ||
-history[i].result ||
+history[i].number ??
+history[i].result ??
 0
 )
 );
@@ -339,8 +364,7 @@ if(results.length < 5){
 return {
 
 side:"WAIT...",
-nextNumber:0,
-hot:0,
+number:0,
 big:0,
 small:0
 
@@ -348,14 +372,14 @@ small:0
 
 }
 
-/* BIG SMALL */
+/* COUNT */
 
 let big = 0;
 let small = 0;
 
 results.forEach(n=>{
 
-if(n <=4){
+if(n <= 4){
 
 small++;
 
@@ -400,25 +424,20 @@ hot = i;
 /* TREND */
 
 let side =
-big > small
+big >= small
 ? "BIG"
 : "SMALL";
 
 /* STREAK */
 
-const last =
-results[0];
-
-const second =
-results[1];
-
-const third =
-results[2];
+const a = results[0];
+const b = results[1];
+const c = results[2];
 
 if(
-last <=4 &&
-second <=4 &&
-third <=4
+a <=4 &&
+b <=4 &&
+c <=4
 ){
 
 side = "SMALL";
@@ -426,9 +445,9 @@ side = "SMALL";
 }
 
 if(
-last >=5 &&
-second >=5 &&
-third >=5
+a >=5 &&
+b >=5 &&
+c >=5
 ){
 
 side = "BIG";
@@ -441,35 +460,31 @@ let nextNumber;
 
 if(side == "BIG"){
 
-const nums =
-[5,6,7,8,9];
+const arr = [5,6,7,8,9];
 
-nums.sort(
-(a,b)=>
-freq[b]-freq[a]
+arr.sort(
+(x,y)=>
+freq[y]-freq[x]
 );
 
-nextNumber =
-nums[0];
+nextNumber = arr[0];
 
 }else{
 
-const nums =
-[0,1,2,3,4];
+const arr = [0,1,2,3,4];
 
-nums.sort(
-(a,b)=>
-freq[b]-freq[a]
+arr.sort(
+(x,y)=>
+freq[y]-freq[x]
 );
 
-nextNumber =
-nums[0];
+nextNumber = arr[0];
 
 }
 
-/* SAME FIX */
+/* REPEAT FIX */
 
-if(nextNumber == last){
+if(nextNumber == results[0]){
 
 if(side == "BIG"){
 
@@ -486,10 +501,10 @@ nextNumber = 2;
 return {
 
 side,
-nextNumber,
-hot,
+number:nextNumber,
 big,
-small
+small,
+hot
 
 };
 
@@ -504,21 +519,31 @@ try{
 document.getElementById("status").innerHTML =
 "CONNECTING...";
 
+/* FETCH */
+
 const response =
-await fetch(API);
+await fetch(PROXY);
+
+/* CHECK */
 
 if(!response.ok){
 
-throw new Error("API ERROR");
+throw new Error(
+"API ERROR"
+);
 
 }
+
+/* JSON */
 
 const data =
 await response.json();
 
+/* HISTORY */
+
 let history = [];
 
-/* SAFE API */
+/* SAFE */
 
 if(
 data &&
@@ -539,43 +564,51 @@ history = data.list;
 }
 else{
 
-throw new Error("INVALID DATA");
+throw new Error(
+"INVALID DATA"
+);
 
 }
+
+/* EMPTY */
 
 if(history.length === 0){
 
-throw new Error("EMPTY DATA");
+throw new Error(
+"EMPTY DATA"
+);
 
 }
+
+/* CURRENT */
 
 const latest =
 history[0];
 
 const currentPeriod =
 String(
-latest.issueNumber ||
-latest.issue ||
-latest.period ||
+latest.issueNumber ??
+latest.issue ??
+latest.period ??
 "0000"
 );
 
 const currentResult =
 Number(
-latest.number ||
-latest.result ||
+latest.number ??
+latest.result ??
 0
 );
 
-/* NEXT PERIOD */
+/* NEXT */
 
 const nextPeriod =
 getNextPeriod();
 
 /* ANALYSIS */
 
-const detect =
-smartPattern(history);
+const predict =
+smartPredict(history);
 
 /* UI */
 
@@ -583,10 +616,10 @@ document.getElementById("period").innerHTML =
 nextPeriod;
 
 document.getElementById("number").innerHTML =
-detect.nextNumber;
+predict.number;
 
 document.getElementById("size").innerHTML =
-detect.side;
+predict.side;
 
 document.getElementById("status").innerHTML =
 "SMART DETECT ACTIVE";
@@ -606,15 +639,15 @@ addTerminal(
 );
 
 addTerminal(
-`Hot Number : ${detect.hot}`
+`Hot Number : ${predict.hot}`
 );
 
 addTerminal(
-`Big : ${detect.big} | Small : ${detect.small}`
+`Big : ${predict.big} | Small : ${predict.small}`
 );
 
 addTerminal(
-`Prediction : ${detect.nextNumber} ${detect.side}`
+`Prediction : ${predict.number} ${predict.side}`
 );
 
 }
@@ -631,7 +664,7 @@ document.getElementById("size").innerHTML =
 "WAIT...";
 
 addTerminal(
-"Retrying connection..."
+"Connection retry..."
 );
 
 }
