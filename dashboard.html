@@ -160,7 +160,7 @@ border:1px solid #00ff99;
 border-radius:14px;
 background:#000;
 margin-bottom:18px;
-height:150px;
+height:160px;
 overflow:auto;
 font-size:12px;
 box-shadow:0 0 16px rgba(0,255,120,0.3);
@@ -211,7 +211,7 @@ box-shadow:0 0 20px #00ff99;
 
 <p id="timer">NEXT UPDATE : 60 SEC</p>
 
-<div id="status">HIGH DETECT ACTIVE</div>
+<div id="status">AUTO DETECT ACTIVE</div>
 
 </div>
 
@@ -223,7 +223,7 @@ box-shadow:0 0 20px #00ff99;
 </div>
 
 <div class="terminal" id="terminal">
-<p>> High detect engine started...</p>
+<p>> Auto detect engine started...</p>
 </div>
 
 <a class="join-btn"
@@ -289,57 +289,73 @@ terminal.lastChild
 
 }
 
-/* PERIOD FIX */
+/* PERIOD */
 
 function getNextPeriod(){
 
 const now = new Date();
 
-let minute =
+const minute =
 now.getMinutes();
 
-/*
-11:35 = 1086
-FORMULA:
-1051 + minute
-*/
-
-let period =
-1051 + minute;
-
-/* NEXT */
-
-return String(period);
+return String(1051 + minute);
 
 }
 
-/* HIGH ANALYSIS */
+/* AUTO ANALYSIS */
 
-function highDetect(history){
+function autoDetect(history){
 
-let freq = {
-0:0,1:0,2:0,3:0,4:0,
-5:0,6:0,7:0,8:0,9:0
-};
+let numbers = [];
 
-let big = 0;
-let small = 0;
+for(let i=0;i<20 && i<history.length;i++){
 
-let streakBig = 0;
-let streakSmall = 0;
-
-/* LAST 80 RESULT */
-
-for(let i=0;i<80 && i<history.length;i++){
-
-const n =
+numbers.push(
 Number(
 history[i].number ||
 history[i].result ||
 0
+)
 );
 
+}
+
+/* FREQUENCY */
+
+let freq = {};
+
+for(let i=0;i<=9;i++){
+
+freq[i]=0;
+
+}
+
+numbers.forEach(n=>{
+
 freq[n]++;
+
+});
+
+/* HOT NUMBER */
+
+let hot = 0;
+
+for(let i=1;i<=9;i++){
+
+if(freq[i] > freq[hot]){
+
+hot = i;
+
+}
+
+}
+
+/* TREND */
+
+let big = 0;
+let small = 0;
+
+numbers.forEach(n=>{
 
 if(n <=4){
 
@@ -351,88 +367,40 @@ big++;
 
 }
 
-}
+});
 
 /* STREAK */
 
-for(let i=0;i<5;i++){
-
-const n =
-Number(history[i].number);
-
-if(n <=4){
-
-streakSmall++;
-
-}else{
-
-break;
-
-}
-
-}
-
-for(let i=0;i<5;i++){
-
-const n =
-Number(history[i].number);
-
-if(n >=5){
-
-streakBig++;
-
-}else{
-
-break;
-
-}
-
-}
-
-/* HOT NUMBER */
-
-let hot = 0;
-let max = 0;
-
-for(let n in freq){
-
-if(freq[n] > max){
-
-max = freq[n];
-hot = Number(n);
-
-}
-
-}
-
-const last =
-Number(history[0].number);
-
-/* SIDE ANALYSIS */
+let last = numbers[0];
+let second = numbers[1];
+let third = numbers[2];
 
 let side;
 
-if(streakSmall >=3){
+if(
+last <=4 &&
+second <=4 &&
+third <=4
+){
 
 side = "BIG";
 
 }
-else if(streakBig >=3){
+else if(
+last >=5 &&
+second >=5 &&
+third >=5
+){
 
 side = "SMALL";
 
 }
 else{
 
-if(small > big){
-
-side = "BIG";
-
-}else{
-
-side = "SMALL";
-
-}
+side =
+small > big
+? "BIG"
+: "SMALL";
 
 }
 
@@ -442,27 +410,27 @@ let nextNumber;
 
 if(side == "BIG"){
 
-const nums = [5,6,7,8,9];
+const arr = [5,6,7,8,9];
 
 nextNumber =
-nums[
-Math.floor(Math.random()*nums.length)
+arr[
+Math.floor(Math.random()*arr.length)
 ];
 
 }else{
 
-const nums = [0,1,2,3,4];
+const arr = [0,1,2,3,4];
 
 nextNumber =
-nums[
-Math.floor(Math.random()*nums.length)
+arr[
+Math.floor(Math.random()*arr.length)
 ];
 
 }
 
 /* HOT BOOST */
 
-if(Math.random() > 0.30){
+if(Math.random() > 0.35){
 
 nextNumber = hot;
 
@@ -482,7 +450,7 @@ nextNumber = 2;
 
 }
 
-/* REPEAT FILTER */
+/* SAME FILTER */
 
 if(nextNumber == last){
 
@@ -492,13 +460,13 @@ nextNumber =
 }
 
 return {
+
 side,
 nextNumber,
 hot,
 big,
-small,
-streakBig,
-streakSmall
+small
+
 };
 
 }
@@ -546,15 +514,11 @@ latest.result ||
 0
 );
 
-/* NEXT PERIOD */
-
 const nextPeriod =
 getNextPeriod();
 
-/* ANALYSIS */
-
 const detect =
-highDetect(history);
+autoDetect(history);
 
 /* UI */
 
