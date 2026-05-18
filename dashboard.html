@@ -211,7 +211,7 @@ box-shadow:0 0 20px #00ff99;
 
 <p id="timer">NEXT UPDATE : 60 SEC</p>
 
-<div id="status">AUTO DETECT ACTIVE</div>
+<div id="status">SMART PATTERN ACTIVE</div>
 
 </div>
 
@@ -223,7 +223,7 @@ box-shadow:0 0 20px #00ff99;
 </div>
 
 <div class="terminal" id="terminal">
-<p>> Auto detect engine started...</p>
+<p>> Smart pattern engine started...</p>
 </div>
 
 <a class="join-btn"
@@ -295,22 +295,23 @@ function getNextPeriod(){
 
 const now = new Date();
 
-const minute =
-now.getMinutes();
-
-return String(1051 + minute);
+return String(
+1051 + now.getMinutes()
+);
 
 }
 
-/* AUTO ANALYSIS */
+/* SMART ANALYSIS */
 
-function autoDetect(history){
+function smartPattern(history){
 
-let numbers = [];
+let results = [];
 
-for(let i=0;i<20 && i<history.length;i++){
+/* LAST 30 RESULTS */
 
-numbers.push(
+for(let i=0;i<30;i++){
+
+results.push(
 Number(
 history[i].number ||
 history[i].result ||
@@ -320,42 +321,12 @@ history[i].result ||
 
 }
 
-/* FREQUENCY */
-
-let freq = {};
-
-for(let i=0;i<=9;i++){
-
-freq[i]=0;
-
-}
-
-numbers.forEach(n=>{
-
-freq[n]++;
-
-});
-
-/* HOT NUMBER */
-
-let hot = 0;
-
-for(let i=1;i<=9;i++){
-
-if(freq[i] > freq[hot]){
-
-hot = i;
-
-}
-
-}
-
-/* TREND */
+/* BIG SMALL COUNT */
 
 let big = 0;
 let small = 0;
 
-numbers.forEach(n=>{
+results.forEach(n=>{
 
 if(n <=4){
 
@@ -369,36 +340,95 @@ big++;
 
 });
 
+/* LAST 5 */
+
+const last5 =
+results.slice(0,5);
+
 /* STREAK */
 
-let last = numbers[0];
-let second = numbers[1];
-let third = numbers[2];
+let streakType = "";
+let streak = 0;
+
+for(let i=0;i<last5.length;i++){
+
+if(last5[i] <=4){
+
+if(streakType == "" || streakType == "SMALL"){
+
+streakType = "SMALL";
+streak++;
+
+}else{
+
+break;
+
+}
+
+}else{
+
+if(streakType == "" || streakType == "BIG"){
+
+streakType = "BIG";
+streak++;
+
+}else{
+
+break;
+
+}
+
+}
+
+}
+
+/* HOT NUMBER */
+
+let freq = {};
+
+for(let i=0;i<=9;i++){
+
+freq[i]=0;
+
+}
+
+results.forEach(n=>{
+
+freq[n]++;
+
+});
+
+let hot = 0;
+
+for(let i=1;i<=9;i++){
+
+if(freq[i] > freq[hot]){
+
+hot = i;
+
+}
+
+}
+
+/* SIDE */
 
 let side;
 
-if(
-last <=4 &&
-second <=4 &&
-third <=4
-){
+/*
+FIX:
+Ab opposite nahi
+same trend continue
+*/
 
-side = "BIG";
+if(streak >=3){
 
-}
-else if(
-last >=5 &&
-second >=5 &&
-third >=5
-){
-
-side = "SMALL";
+side = streakType;
 
 }
 else{
 
 side =
-small > big
+big > small
 ? "BIG"
 : "SMALL";
 
@@ -410,52 +440,45 @@ let nextNumber;
 
 if(side == "BIG"){
 
-const arr = [5,6,7,8,9];
+const bigNums =
+[5,6,7,8,9];
 
-nextNumber =
-arr[
-Math.floor(Math.random()*arr.length)
-];
+let sorted =
+bigNums.sort(
+(a,b)=>
+freq[b]-freq[a]
+);
+
+nextNumber = sorted[0];
 
 }else{
 
-const arr = [0,1,2,3,4];
+const smallNums =
+[0,1,2,3,4];
 
-nextNumber =
-arr[
-Math.floor(Math.random()*arr.length)
-];
+let sorted =
+smallNums.sort(
+(a,b)=>
+freq[b]-freq[a]
+);
 
-}
-
-/* HOT BOOST */
-
-if(Math.random() > 0.35){
-
-nextNumber = hot;
-
-}
-
-/* FIX */
-
-if(side == "BIG" && nextNumber <=4){
-
-nextNumber = 7;
-
-}
-
-if(side == "SMALL" && nextNumber >=5){
-
-nextNumber = 2;
+nextNumber = sorted[0];
 
 }
 
 /* SAME FILTER */
 
-if(nextNumber == last){
+if(nextNumber == results[0]){
 
-nextNumber =
-(nextNumber + 1) % 10;
+if(side == "BIG"){
+
+nextNumber = 7;
+
+}else{
+
+nextNumber = 2;
+
+}
 
 }
 
@@ -465,7 +488,9 @@ side,
 nextNumber,
 hot,
 big,
-small
+small,
+streak,
+streakType
 
 };
 
@@ -518,7 +543,7 @@ const nextPeriod =
 getNextPeriod();
 
 const detect =
-autoDetect(history);
+smartPattern(history);
 
 /* UI */
 
@@ -551,6 +576,10 @@ addTerminal(
 
 addTerminal(
 `Big : ${detect.big} | Small : ${detect.small}`
+);
+
+addTerminal(
+`Streak : ${detect.streak} ${detect.streakType}`
 );
 
 addTerminal(
