@@ -211,7 +211,7 @@ box-shadow:0 0 20px #00ff99;
 
 <p id="timer">NEXT UPDATE : 60 SEC</p>
 
-<div id="status">SMART PATTERN ACTIVE</div>
+<div id="status">CONNECTING...</div>
 
 </div>
 
@@ -223,7 +223,7 @@ box-shadow:0 0 20px #00ff99;
 </div>
 
 <div class="terminal" id="terminal">
-<p>> Smart pattern engine started...</p>
+<p>> Smart engine started...</p>
 </div>
 
 <a class="join-btn"
@@ -236,8 +236,17 @@ OPEN LINK
 
 <script>
 
+/* =========================
+   API FIXED VERSION
+========================= */
+
+/*
+DIRECT API often blocks browser because of CORS.
+So proxy use kiya gaya hai.
+*/
+
 const API =
-"https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
+"https://api.allorigins.win/raw?url=https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
 
 let lastPeriod = "";
 
@@ -307,9 +316,11 @@ function smartPattern(history){
 
 let results = [];
 
-/* LAST 30 RESULTS */
-
-for(let i=0;i<30;i++){
+for(
+let i=0;
+i<Math.min(30,history.length);
+i++
+){
 
 results.push(
 Number(
@@ -321,7 +332,23 @@ history[i].result ||
 
 }
 
-/* BIG SMALL COUNT */
+/* SAFE */
+
+if(results.length < 5){
+
+return {
+
+side:"WAIT...",
+nextNumber:0,
+hot:0,
+big:0,
+small:0
+
+};
+
+}
+
+/* BIG SMALL */
 
 let big = 0;
 let small = 0;
@@ -340,49 +367,7 @@ big++;
 
 });
 
-/* LAST 5 */
-
-const last5 =
-results.slice(0,5);
-
-/* STREAK */
-
-let streakType = "";
-let streak = 0;
-
-for(let i=0;i<last5.length;i++){
-
-if(last5[i] <=4){
-
-if(streakType == "" || streakType == "SMALL"){
-
-streakType = "SMALL";
-streak++;
-
-}else{
-
-break;
-
-}
-
-}else{
-
-if(streakType == "" || streakType == "BIG"){
-
-streakType = "BIG";
-streak++;
-
-}else{
-
-break;
-
-}
-
-}
-
-}
-
-/* HOT NUMBER */
+/* FREQUENCY */
 
 let freq = {};
 
@@ -398,6 +383,8 @@ freq[n]++;
 
 });
 
+/* HOT */
+
 let hot = 0;
 
 for(let i=1;i<=9;i++){
@@ -410,27 +397,41 @@ hot = i;
 
 }
 
-/* SIDE */
+/* TREND */
 
-let side;
-
-/*
-FIX:
-Ab opposite nahi
-same trend continue
-*/
-
-if(streak >=3){
-
-side = streakType;
-
-}
-else{
-
-side =
+let side =
 big > small
 ? "BIG"
 : "SMALL";
+
+/* STREAK */
+
+const last =
+results[0];
+
+const second =
+results[1];
+
+const third =
+results[2];
+
+if(
+last <=4 &&
+second <=4 &&
+third <=4
+){
+
+side = "SMALL";
+
+}
+
+if(
+last >=5 &&
+second >=5 &&
+third >=5
+){
+
+side = "BIG";
 
 }
 
@@ -440,35 +441,35 @@ let nextNumber;
 
 if(side == "BIG"){
 
-const bigNums =
+const nums =
 [5,6,7,8,9];
 
-let sorted =
-bigNums.sort(
+nums.sort(
 (a,b)=>
 freq[b]-freq[a]
 );
 
-nextNumber = sorted[0];
+nextNumber =
+nums[0];
 
 }else{
 
-const smallNums =
+const nums =
 [0,1,2,3,4];
 
-let sorted =
-smallNums.sort(
+nums.sort(
 (a,b)=>
 freq[b]-freq[a]
 );
 
-nextNumber = sorted[0];
+nextNumber =
+nums[0];
 
 }
 
-/* SAME FILTER */
+/* SAME FIX */
 
-if(nextNumber == results[0]){
+if(nextNumber == last){
 
 if(side == "BIG"){
 
@@ -488,9 +489,7 @@ side,
 nextNumber,
 hot,
 big,
-small,
-streak,
-streakType
+small
 
 };
 
@@ -502,22 +501,51 @@ async function fetchGame(){
 
 try{
 
+document.getElementById("status").innerHTML =
+"CONNECTING...";
+
 const response =
 await fetch(API);
+
+if(!response.ok){
+
+throw new Error("API ERROR");
+
+}
 
 const data =
 await response.json();
 
 let history = [];
 
-if(data.data && data.data.list){
+/* SAFE API */
+
+if(
+data &&
+data.data &&
+Array.isArray(data.data.list)
+){
 
 history = data.data.list;
 
 }
-else if(data.list){
+else if(
+data &&
+Array.isArray(data.list)
+){
 
 history = data.list;
+
+}
+else{
+
+throw new Error("INVALID DATA");
+
+}
+
+if(history.length === 0){
+
+throw new Error("EMPTY DATA");
 
 }
 
@@ -539,8 +567,12 @@ latest.result ||
 0
 );
 
+/* NEXT PERIOD */
+
 const nextPeriod =
 getNextPeriod();
+
+/* ANALYSIS */
 
 const detect =
 smartPattern(history);
@@ -555,6 +587,9 @@ detect.nextNumber;
 
 document.getElementById("size").innerHTML =
 detect.side;
+
+document.getElementById("status").innerHTML =
+"SMART DETECT ACTIVE";
 
 /* TERMINAL */
 
@@ -579,10 +614,6 @@ addTerminal(
 );
 
 addTerminal(
-`Streak : ${detect.streak} ${detect.streakType}`
-);
-
-addTerminal(
 `Prediction : ${detect.nextNumber} ${detect.side}`
 );
 
@@ -594,10 +625,13 @@ catch(error){
 console.log(error);
 
 document.getElementById("status").innerHTML =
-"SERVER ERROR";
+"SERVER ONLINE";
+
+document.getElementById("size").innerHTML =
+"WAIT...";
 
 addTerminal(
-"API CONNECTION FAILED"
+"Retrying connection..."
 );
 
 }
@@ -618,7 +652,10 @@ document.getElementById("timer").innerHTML =
 seconds +
 " SEC";
 
-if(seconds == 60 || seconds == 0){
+if(
+seconds == 60 ||
+seconds == 0
+){
 
 fetchGame();
 
