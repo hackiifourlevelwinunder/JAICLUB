@@ -53,7 +53,6 @@ border-radius:18px;
 padding:16px;
 box-shadow:0 0 25px #00ff99;
 text-align:center;
-backdrop-filter:blur(8px);
 }
 
 .panel h1{
@@ -73,7 +72,6 @@ box-shadow:0 0 16px #00ff99;
 #wallclock{
 font-size:30px;
 font-weight:bold;
-letter-spacing:1px;
 }
 
 .period-card{
@@ -85,7 +83,7 @@ margin-bottom:16px;
 }
 
 #period{
-font-size:28px;
+font-size:34px;
 font-weight:bold;
 margin-bottom:18px;
 text-shadow:0 0 14px #00ff99;
@@ -136,7 +134,6 @@ font-weight:bold;
 margin-top:10px;
 font-size:16px;
 font-weight:bold;
-text-shadow:0 0 10px #00ff99;
 }
 
 .cyber-grid{
@@ -185,11 +182,6 @@ font-weight:bold;
 font-size:16px;
 text-decoration:none;
 box-shadow:0 0 20px #00ff99;
-transition:0.3s;
-}
-
-.join-btn:hover{
-transform:scale(1.05);
 }
 
 </style>
@@ -249,7 +241,7 @@ const API =
 
 let lastPeriod = "";
 
-/* ---------- CLOCK ---------- */
+/* CLOCK */
 
 function updateClock(){
 
@@ -273,7 +265,7 @@ document.getElementById("wallclock").innerHTML =
 
 }
 
-/* ---------- TERMINAL ---------- */
+/* TERMINAL */
 
 function addTerminal(text){
 
@@ -297,7 +289,7 @@ terminal.lastChild
 
 }
 
-/* ---------- HIGH DETECT ---------- */
+/* DETECT */
 
 function highDetect(history){
 
@@ -308,8 +300,6 @@ let freq = {
 
 let big = 0;
 let small = 0;
-
-/* LAST 50 RESULT */
 
 for(let i=0;i<50 && i<history.length;i++){
 
@@ -334,7 +324,7 @@ big++;
 
 }
 
-/* HOT NUMBER */
+/* HOT */
 
 let hot = 0;
 let max = 0;
@@ -350,8 +340,6 @@ hot = Number(n);
 
 }
 
-/* LAST RESULT */
-
 const last =
 Number(history[0].number);
 
@@ -360,8 +348,6 @@ Number(history[1].number);
 
 const third =
 Number(history[2].number);
-
-/* SIDE */
 
 let side;
 
@@ -397,8 +383,6 @@ side = "SMALL";
 
 }
 
-/* NUMBER */
-
 let nextNumber;
 
 if(side == "BIG"){
@@ -429,8 +413,6 @@ nextNumber = hot;
 
 }
 
-/* FIX */
-
 if(side == "BIG" && nextNumber <=4){
 
 nextNumber = 7;
@@ -453,7 +435,7 @@ small
 
 }
 
-/* ---------- FETCH ---------- */
+/* FETCH */
 
 async function fetchGame(){
 
@@ -482,10 +464,24 @@ const latest =
 history[0];
 
 const currentPeriod =
+String(
 latest.issueNumber ||
 latest.issue ||
 latest.period ||
-"0";
+"0000"
+);
+
+/* REAL NEXT PERIOD */
+
+const nextPeriod =
+String(
+Number(currentPeriod) + 1
+);
+
+/* ONLY LAST 4 DIGITS */
+
+const shortPeriod =
+nextPeriod.slice(-4);
 
 const currentResult =
 Number(
@@ -493,47 +489,6 @@ latest.number ||
 latest.result ||
 0
 );
-
-/* NEXT PERIOD */
-
-const now = new Date();
-
-let yyyy = now.getFullYear();
-
-let mm =
-String(now.getMonth()+1)
-.padStart(2,'0');
-
-let dd =
-String(now.getDate())
-.padStart(2,'0');
-
-let hh =
-String(now.getHours())
-.padStart(2,'0');
-
-let min =
-now.getMinutes() + 1;
-
-if(min >= 60){
-
-min = 0;
-
-}
-
-min =
-String(min)
-.padStart(2,'0');
-
-const nextPeriod =
-`${yyyy}${mm}${dd}1000${hh}${min}`;
-
-/* ONLY LAST 4 DIGITS */
-
-const shortPeriod =
-nextPeriod.slice(-4);
-
-/* DETECT */
 
 const detect =
 highDetect(history);
@@ -593,7 +548,7 @@ addTerminal(
 
 }
 
-/* ---------- TIMER ---------- */
+/* TIMER */
 
 function updateTimer(){
 
@@ -615,7 +570,7 @@ fetchGame();
 
 }
 
-/* ---------- START ---------- */
+/* START */
 
 updateClock();
 updateTimer();
