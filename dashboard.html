@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CYBER DASHBOARD</title>
 
@@ -11,7 +10,7 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
+font-family:Arial, sans-serif;
 }
 
 body{
@@ -21,11 +20,9 @@ color:#00ff99;
 display:flex;
 justify-content:center;
 align-items:center;
-min-height:100vh;
-padding:8px;
+height:100vh;
+padding:10px;
 }
-
-/* BACKGROUND */
 
 .matrix{
 position:fixed;
@@ -34,83 +31,74 @@ height:100%;
 background:
 linear-gradient(rgba(0,255,120,0.08) 1px, transparent 1px),
 linear-gradient(90deg, rgba(0,255,120,0.08) 1px, transparent 1px);
-background-size:28px 28px;
+background-size:30px 30px;
 animation:gridmove 8s linear infinite;
 z-index:0;
 }
 
 @keyframes gridmove{
 0%{transform:translateY(0);}
-100%{transform:translateY(28px);}
+100%{transform:translateY(30px);}
 }
-
-/* PANEL */
 
 .panel{
 position:relative;
 z-index:1;
 width:100%;
-max-width:390px;
-background:rgba(0,0,0,0.92);
+max-width:430px;
+background:rgba(0,0,0,0.82);
 border:2px solid #00ff99;
 border-radius:18px;
-padding:16px;
+padding:20px;
 box-shadow:0 0 25px #00ff99;
 text-align:center;
+backdrop-filter:blur(8px);
 }
 
 .panel h1{
-font-size:20px;
-margin-bottom:16px;
-text-shadow:0 0 14px #00ff99;
+font-size:26px;
+margin-bottom:18px;
+text-shadow:0 0 15px #00ff99;
 }
-
-/* CLOCK */
 
 .clock-box{
 padding:14px;
 border:1px solid #00ff99;
-border-radius:14px;
-margin-bottom:16px;
-box-shadow:0 0 16px #00ff99;
+border-radius:12px;
+margin-bottom:18px;
+box-shadow:0 0 15px #00ff99;
 }
 
 #wallclock{
-font-size:30px;
-font-weight:bold;
+font-size:28px;
+letter-spacing:2px;
 }
 
-/* CARD */
-
 .period-card{
-padding:18px;
+padding:20px;
 border:1px solid #00ff99;
-border-radius:18px;
+border-radius:16px;
 box-shadow:0 0 20px rgba(0,255,150,0.5);
-margin-bottom:16px;
+margin-bottom:18px;
 }
 
 #period{
-font-size:34px;
-font-weight:bold;
+font-size:22px;
 margin-bottom:18px;
-text-shadow:0 0 14px #00ff99;
 }
 
-/* NUMBER */
-
 .number-glow{
-margin:16px auto;
-width:150px;
-height:150px;
+margin:20px auto;
+width:130px;
+height:130px;
 border-radius:50%;
 display:flex;
 justify-content:center;
 align-items:center;
 background:rgba(0,255,120,0.08);
 box-shadow:
-0 0 30px #00ff99,
-0 0 80px #00ff99;
+0 0 25px #00ff99,
+0 0 50px #00ff99;
 animation:pulse 1.5s infinite;
 }
 
@@ -121,38 +109,28 @@ animation:pulse 1.5s infinite;
 }
 
 #number{
-font-size:90px;
+font-size:70px;
 font-weight:bold;
 color:#00ff99;
-text-shadow:0 0 30px #00ff99;
+text-shadow:0 0 25px #00ff99;
 }
 
 #size{
-font-size:42px;
-margin-top:12px;
-font-weight:bold;
-text-shadow:0 0 15px #00ff99;
+font-size:30px;
+margin-top:10px;
+text-shadow:0 0 10px #00ff99;
 }
 
 #timer{
 margin-top:14px;
-font-size:20px;
-font-weight:bold;
+font-size:18px;
 }
-
-#status{
-margin-top:10px;
-font-size:16px;
-font-weight:bold;
-}
-
-/* GRID */
 
 .cyber-grid{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:10px;
-margin-bottom:16px;
+gap:12px;
+margin-bottom:18px;
 }
 
 .box{
@@ -160,49 +138,47 @@ padding:14px;
 border:1px solid #00ff99;
 border-radius:12px;
 background:rgba(0,255,120,0.06);
-font-size:13px;
-font-weight:bold;
+font-size:14px;
 box-shadow:0 0 10px rgba(0,255,120,0.4);
 }
 
-/* TERMINAL */
-
 .terminal{
 text-align:left;
-padding:14px;
+padding:15px;
 border:1px solid #00ff99;
-border-radius:14px;
+border-radius:12px;
 background:#000;
-margin-bottom:18px;
-height:160px;
+margin-bottom:20px;
+height:120px;
 overflow:auto;
-font-size:12px;
-box-shadow:0 0 16px rgba(0,255,120,0.3);
+font-size:13px;
+box-shadow:0 0 15px rgba(0,255,120,0.3);
 }
 
 .terminal p{
 margin-bottom:8px;
 color:#00ff99;
-font-weight:bold;
 }
-
-/* BUTTON */
 
 .join-btn{
 display:inline-block;
 padding:14px 28px;
-border-radius:14px;
+border-radius:12px;
 background:#00ff99;
 color:#000;
 font-weight:bold;
-font-size:16px;
 text-decoration:none;
 box-shadow:0 0 20px #00ff99;
+transition:0.3s;
+}
+
+.join-btn:hover{
+transform:scale(1.05);
 }
 
 </style>
-</head>
 
+</head>
 <body>
 
 <div class="matrix"></div>
@@ -217,17 +193,15 @@ box-shadow:0 0 20px #00ff99;
 
 <div class="period-card">
 
-<h2 id="period">0000</h2>
+<h2 id="period">PERIOD : 0000</h2>
 
 <div class="number-glow">
 <h1 id="number">0</h1>
 </div>
 
-<h2 id="size">WAIT...</h2>
+<h2 id="size">SMALL</h2>
 
 <p id="timer">NEXT UPDATE : 60 SEC</p>
-
-<div id="status">CONNECTING...</div>
 
 </div>
 
@@ -235,11 +209,14 @@ box-shadow:0 0 20px #00ff99;
 <div class="box">FIREWALL : ACTIVE</div>
 <div class="box">NODE : CONNECTED</div>
 <div class="box">SERVER : ONLINE</div>
-<div class="box">SYSTEM : STABLE</div>
+<div class="box">STATUS : STABLE</div>
 </div>
 
-<div class="terminal" id="terminal">
-<p>> Smart engine started...</p>
+<div class="terminal">
+<p>> Monitoring cyber traffic...</p>
+<p>> Active panel synchronized...</p>
+<p>> Result engine secured...</p>
+<p>> Live refresh active...</p>
 </div>
 
 <a class="join-btn"
@@ -252,22 +229,9 @@ OPEN LINK
 
 <script>
 
-/* =========================
-   WORKING API
-========================= */
+let currentPeriod = 0;
 
-const API =
-"https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
-
-/* CORS FIX */
-
-const PROXY =
-"https://api.allorigins.win/raw?url=" +
-encodeURIComponent(API);
-
-let lastPeriod = "";
-
-/* CLOCK */
+/* ---------- CLOCK ---------- */
 
 function updateClock(){
 
@@ -277,430 +241,155 @@ let h = now.getHours();
 let m = now.getMinutes();
 let s = now.getSeconds();
 
-let ampm =
-h >= 12
-? "PM"
-: "AM";
+let ampm = h >= 12 ? "PM" : "AM";
 
 h = h % 12;
 h = h ? h : 12;
 
-h = String(h).padStart(2,"0");
-m = String(m).padStart(2,"0");
-s = String(s).padStart(2,"0");
+h = String(h).padStart(2,'0');
+m = String(m).padStart(2,'0');
+s = String(s).padStart(2,'0');
 
 document.getElementById("wallclock").innerHTML =
-`${h}:${m}:${s} ${ampm}`;
+h + ":" + m + ":" + s + " " + ampm;
 
 }
 
-/* TERMINAL */
+/* ---------- PERIOD ---------- */
 
-function addTerminal(text){
-
-const terminal =
-document.getElementById("terminal");
-
-const p =
-document.createElement("p");
-
-p.innerHTML =
-"> " + text;
-
-terminal.prepend(p);
-
-if(
-terminal.children.length > 25
-){
-
-terminal.removeChild(
-terminal.lastChild
-);
-
-}
-
-}
-
-/* PERIOD */
-
-function getNextPeriod(){
+function calculatePeriod(){
 
 const now = new Date();
 
-return String(
-1051 + now.getMinutes()
-);
+let start = new Date(now);
+
+start.setHours(5,30,0,0);
+
+if(now < start){
+start.setDate(start.getDate()-1);
+}
+
+const diff =
+Math.floor((now - start)/60000) + 1;
+
+return diff;
 
 }
 
-/* ANALYSIS */
+/* ---------- HASH RNG ---------- */
 
-function smartPredict(history){
+function generateHash(input){
 
-let results = [];
+let hash = 0;
 
-/* LAST 20 */
+for(let i = 0; i < input.length; i++){
 
-for(
-let i=0;
-i<Math.min(20,history.length);
-i++
-){
+hash =
+((hash << 5) - hash) + input.charCodeAt(i);
 
-results.push(
-Number(
-history[i].number ??
-history[i].result ??
-0
-)
-);
+hash |= 0;
 
 }
 
-/* SAFE */
-
-if(results.length < 5){
-
-return {
-
-side:"WAIT...",
-number:0,
-big:0,
-small:0
-
-};
+return Math.abs(hash);
 
 }
 
-/* COUNT */
+/* ---------- HIGH FREQUENCY LOGIC ---------- */
 
-let big = 0;
-let small = 0;
+function getHighFrequencyNumber(period){
 
-results.forEach(n=>{
+const now = new Date();
 
-if(n <= 4){
+const seed =
+period +
+"-" +
+now.getHours() +
+"-" +
+now.getMinutes();
 
-small++;
+const hash = generateHash(seed);
 
-}else{
+/*
+HIGH FREQUENCY:
+0-4 = more chances
+5-9 = less chances
+*/
 
-big++;
+const weightedNumbers = [
 
-}
+0,0,0,
+1,1,1,
+2,2,2,
+3,3,
+4,4,
 
-});
+5,
+6,
+7,
+8,
+9
 
-/* FREQUENCY */
+];
 
-let freq = {};
+const index =
+hash % weightedNumbers.length;
 
-for(let i=0;i<=9;i++){
-
-freq[i]=0;
-
-}
-
-results.forEach(n=>{
-
-freq[n]++;
-
-});
-
-/* HOT */
-
-let hot = 0;
-
-for(let i=1;i<=9;i++){
-
-if(freq[i] > freq[hot]){
-
-hot = i;
+return weightedNumbers[index];
 
 }
 
-}
+/* ---------- RESULT ---------- */
 
-/* TREND */
+function updateResult(){
 
-let side =
-big >= small
-? "BIG"
-: "SMALL";
-
-/* STREAK */
-
-const a = results[0];
-const b = results[1];
-const c = results[2];
-
-if(
-a <=4 &&
-b <=4 &&
-c <=4
-){
-
-side = "SMALL";
-
-}
-
-if(
-a >=5 &&
-b >=5 &&
-c >=5
-){
-
-side = "BIG";
-
-}
-
-/* NUMBER */
-
-let nextNumber;
-
-if(side == "BIG"){
-
-const arr = [5,6,7,8,9];
-
-arr.sort(
-(x,y)=>
-freq[y]-freq[x]
-);
-
-nextNumber = arr[0];
-
-}else{
-
-const arr = [0,1,2,3,4];
-
-arr.sort(
-(x,y)=>
-freq[y]-freq[x]
-);
-
-nextNumber = arr[0];
-
-}
-
-/* REPEAT FIX */
-
-if(nextNumber == results[0]){
-
-if(side == "BIG"){
-
-nextNumber = 7;
-
-}else{
-
-nextNumber = 2;
-
-}
-
-}
-
-return {
-
-side,
-number:nextNumber,
-big,
-small,
-hot
-
-};
-
-}
-
-/* FETCH */
-
-async function fetchGame(){
-
-try{
-
-document.getElementById("status").innerHTML =
-"CONNECTING...";
-
-/* FETCH */
-
-const response =
-await fetch(PROXY);
-
-/* CHECK */
-
-if(!response.ok){
-
-throw new Error(
-"API ERROR"
-);
-
-}
-
-/* JSON */
-
-const data =
-await response.json();
-
-/* HISTORY */
-
-let history = [];
-
-/* SAFE */
-
-if(
-data &&
-data.data &&
-Array.isArray(data.data.list)
-){
-
-history = data.data.list;
-
-}
-else if(
-data &&
-Array.isArray(data.list)
-){
-
-history = data.list;
-
-}
-else{
-
-throw new Error(
-"INVALID DATA"
-);
-
-}
-
-/* EMPTY */
-
-if(history.length === 0){
-
-throw new Error(
-"EMPTY DATA"
-);
-
-}
-
-/* CURRENT */
-
-const latest =
-history[0];
-
-const currentPeriod =
-String(
-latest.issueNumber ??
-latest.issue ??
-latest.period ??
-"0000"
-);
-
-const currentResult =
-Number(
-latest.number ??
-latest.result ??
-0
-);
-
-/* NEXT */
-
-const nextPeriod =
-getNextPeriod();
-
-/* ANALYSIS */
-
-const predict =
-smartPredict(history);
-
-/* UI */
+currentPeriod = calculatePeriod();
 
 document.getElementById("period").innerHTML =
-nextPeriod;
+"PERIOD : " +
+String(currentPeriod).padStart(4,'0');
+
+const num = getHighFrequencyNumber(currentPeriod);
 
 document.getElementById("number").innerHTML =
-predict.number;
+num;
+
+if(num <= 4){
 
 document.getElementById("size").innerHTML =
-predict.side;
+"SMALL";
 
-document.getElementById("status").innerHTML =
-"SMART DETECT ACTIVE";
-
-/* TERMINAL */
-
-if(lastPeriod != currentPeriod){
-
-lastPeriod = currentPeriod;
-
-addTerminal(
-`Last Result : ${currentResult}`
-);
-
-addTerminal(
-`Next Period : ${nextPeriod}`
-);
-
-addTerminal(
-`Hot Number : ${predict.hot}`
-);
-
-addTerminal(
-`Big : ${predict.big} | Small : ${predict.small}`
-);
-
-addTerminal(
-`Prediction : ${predict.number} ${predict.side}`
-);
-
-}
-
-}
-catch(error){
-
-console.log(error);
-
-document.getElementById("status").innerHTML =
-"SERVER ONLINE";
+}else{
 
 document.getElementById("size").innerHTML =
-"WAIT...";
-
-addTerminal(
-"Connection retry..."
-);
+"BIG";
 
 }
 
 }
 
-/* TIMER */
+/* ---------- TIMER ---------- */
 
 function updateTimer(){
 
 const now = new Date();
 
-const seconds =
-60 - now.getSeconds();
+const sec = 60 - now.getSeconds();
 
 document.getElementById("timer").innerHTML =
-"NEXT UPDATE : " +
-seconds +
-" SEC";
+"NEXT UPDATE : " + sec + " SEC";
 
-if(
-seconds == 60 ||
-seconds == 0
-){
-
-fetchGame();
-
+if(sec === 60 || sec === 0){
+updateResult();
 }
 
 }
 
-/* START */
+/* ---------- START ---------- */
 
 updateClock();
+updateResult();
 updateTimer();
-fetchGame();
 
 setInterval(updateClock,1000);
 setInterval(updateTimer,1000);
