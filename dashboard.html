@@ -10,7 +10,7 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial, sans-serif;
+font-family:Arial,sans-serif;
 }
 
 body{
@@ -149,7 +149,7 @@ border:1px solid #00ff99;
 border-radius:12px;
 background:#000;
 margin-bottom:20px;
-height:120px;
+height:150px;
 overflow:auto;
 font-size:13px;
 box-shadow:0 0 15px rgba(0,255,120,0.3);
@@ -176,9 +176,15 @@ transition:0.3s;
 transform:scale(1.05);
 }
 
-</style>
+#status{
+margin-top:10px;
+font-size:14px;
+color:#00ff99;
+}
 
+</style>
 </head>
+
 <body>
 
 <div class="matrix"></div>
@@ -193,15 +199,17 @@ transform:scale(1.05);
 
 <div class="period-card">
 
-<h2 id="period">PERIOD : 0000</h2>
+<h2 id="period">PERIOD : ----</h2>
 
 <div class="number-glow">
 <h1 id="number">0</h1>
 </div>
 
-<h2 id="size">SMALL</h2>
+<h2 id="size">WAIT...</h2>
 
 <p id="timer">NEXT UPDATE : 60 SEC</p>
+
+<div id="status">SERVER CONNECTING...</div>
 
 </div>
 
@@ -212,11 +220,8 @@ transform:scale(1.05);
 <div class="box">STATUS : STABLE</div>
 </div>
 
-<div class="terminal">
-<p>> Monitoring cyber traffic...</p>
-<p>> Active panel synchronized...</p>
-<p>> Result engine secured...</p>
-<p>> Live refresh active...</p>
+<div class="terminal" id="terminal">
+<p>> System boot completed...</p>
 </div>
 
 <a class="join-btn"
@@ -229,9 +234,12 @@ OPEN LINK
 
 <script>
 
-let currentPeriod = 0;
+const API =
+"https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
 
-/* ---------- CLOCK ---------- */
+let historyData = [];
+
+/* ---------------- CLOCK ---------------- */
 
 function updateClock(){
 
@@ -251,110 +259,82 @@ m = String(m).padStart(2,'0');
 s = String(s).padStart(2,'0');
 
 document.getElementById("wallclock").innerHTML =
-h + ":" + m + ":" + s + " " + ampm;
+`${h}:${m}:${s} ${ampm}`;
 
 }
 
-/* ---------- PERIOD ---------- */
+/* ---------------- TERMINAL ---------------- */
 
-function calculatePeriod(){
+function addTerminal(msg){
 
-const now = new Date();
+const terminal =
+document.getElementById("terminal");
 
-let start = new Date(now);
+const p = document.createElement("p");
 
-start.setHours(5,30,0,0);
+p.innerHTML = "> " + msg;
 
-if(now < start){
-start.setDate(start.getDate()-1);
+terminal.prepend(p);
+
+if(terminal.children.length > 20){
+terminal.removeChild(terminal.lastChild);
 }
-
-const diff =
-Math.floor((now - start)/60000) + 1;
-
-return diff;
-
-}
-
-/* ---------- HASH RNG ---------- */
-
-function generateHash(input){
-
-let hash = 0;
-
-for(let i = 0; i < input.length; i++){
-
-hash =
-((hash << 5) - hash) + input.charCodeAt(i);
-
-hash |= 0;
 
 }
 
-return Math.abs(hash);
+/* ---------------- API FETCH ---------------- */
 
+async function fetchResult(){
+
+try{
+
+document.getElementById("status").innerHTML =
+"SERVER CONNECTED";
+
+const res = await fetch(API);
+
+const data = await res.json();
+
+console.log(data);
+
+let list = [];
+
+/* AUTO DETECT RESPONSE */
+
+if(data.data && data.data.list){
+list = data.data.list;
+}
+else if(data.list){
+list = data.list;
+}
+else{
+throw new Error("API FORMAT ERROR");
 }
 
-/* ---------- HIGH FREQUENCY LOGIC ---------- */
+historyData = list;
 
-function getHighFrequencyNumber(period){
+const latest = list[0];
 
-const now = new Date();
+const issue =
+latest.issueNumber ||
+latest.issue ||
+latest.period ||
+"----";
 
-const seed =
-period +
-"-" +
-now.getHours() +
-"-" +
-now.getMinutes();
-
-const hash = generateHash(seed);
-
-/*
-HIGH FREQUENCY:
-0-4 = more chances
-5-9 = less chances
-*/
-
-const weightedNumbers = [
-
-0,0,0,
-1,1,1,
-2,2,2,
-3,3,
-4,4,
-
-5,
-6,
-7,
-8,
-9
-
-];
-
-const index =
-hash % weightedNumbers.length;
-
-return weightedNumbers[index];
-
-}
-
-/* ---------- RESULT ---------- */
-
-function updateResult(){
-
-currentPeriod = calculatePeriod();
+const number =
+Number(
+latest.number ||
+latest.result ||
+0
+);
 
 document.getElementById("period").innerHTML =
-"PERIOD : " +
-String(currentPeriod).padStart(4,'0');
-
-const num = getHighFrequencyNumber(currentPeriod);
+"PERIOD : " + issue;
 
 document.getElementById("number").innerHTML =
-num;
+number;
 
-if(num <= 4){
+if(number <= 4){
 
 document.getElementById("size").innerHTML =
 "SMALL";
@@ -366,9 +346,65 @@ document.getElementById("size").innerHTML =
 
 }
 
+/* PREDICTION */
+
+const prediction = analyseTrend(list);
+
+addTerminal(
+`Result : ${number} | Prediction : ${prediction}`
+);
+
+}
+catch(err){
+
+console.log(err);
+
+document.getElementById("status").innerHTML =
+"API ERROR";
+
+addTerminal("API CONNECTION FAILED");
+
 }
 
-/* ---------- TIMER ---------- */
+}
+
+/* ---------------- ANALYSIS ---------------- */
+
+function analyseTrend(list){
+
+let small = 0;
+let big = 0;
+
+for(let i = 0; i < Math.min(10,list.length); i++){
+
+const n =
+Number(
+list[i].number ||
+list[i].result ||
+0
+);
+
+if(n <= 4){
+small++;
+}else{
+big++;
+}
+
+}
+
+if(small > big){
+return "BIG";
+}
+else if(big > small){
+return "SMALL";
+}
+else{
+return "RANDOM";
+}
+
+}
+
+/* ---------------- TIMER ---------------- */
 
 function updateTimer(){
 
@@ -380,16 +416,18 @@ document.getElementById("timer").innerHTML =
 "NEXT UPDATE : " + sec + " SEC";
 
 if(sec === 60 || sec === 0){
-updateResult();
-}
+
+fetchResult();
 
 }
 
-/* ---------- START ---------- */
+}
+
+/* ---------------- START ---------------- */
 
 updateClock();
-updateResult();
 updateTimer();
+fetchResult();
 
 setInterval(updateClock,1000);
 setInterval(updateTimer,1000);
