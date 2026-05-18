@@ -52,7 +52,7 @@ window.location.href="dashboard.html";
 }else{
 
 document.getElementById("result").innerHTML =
-"UID NOT VERIFIED";
+"UID NOT VERIFIED= DEPOSIT NOW ";
 
 }
 
