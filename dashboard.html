@@ -289,7 +289,32 @@ terminal.lastChild
 
 }
 
-/* DETECT */
+/* PERIOD FIX */
+
+function getNextPeriod(){
+
+const now = new Date();
+
+let hour = now.getHours();
+let minute = now.getMinutes();
+
+/*
+11:32 = 32 + 1051 = 1083
+11:20 = 20 + 1051 = 1071
+*/
+
+let period =
+1051 + minute;
+
+/* NEXT */
+
+period = period + 1;
+
+return String(period);
+
+}
+
+/* HIGH DETECT */
 
 function highDetect(history){
 
@@ -323,8 +348,6 @@ big++;
 }
 
 }
-
-/* HOT */
 
 let hot = 0;
 let max = 0;
@@ -405,8 +428,6 @@ Math.floor(Math.random()*nums.length)
 
 }
 
-/* HOT BOOST */
-
 if(Math.random() > 0.40){
 
 nextNumber = hot;
@@ -471,18 +492,6 @@ latest.period ||
 "0000"
 );
 
-/* REAL NEXT PERIOD */
-
-const nextPeriod =
-String(
-Number(currentPeriod) + 1
-);
-
-/* ONLY LAST 4 DIGITS */
-
-const shortPeriod =
-nextPeriod.slice(-4);
-
 const currentResult =
 Number(
 latest.number ||
@@ -490,13 +499,20 @@ latest.result ||
 0
 );
 
+/* NEXT PERIOD */
+
+const nextPeriod =
+getNextPeriod();
+
+/* DETECT */
+
 const detect =
 highDetect(history);
 
 /* UI */
 
 document.getElementById("period").innerHTML =
-shortPeriod;
+nextPeriod;
 
 document.getElementById("number").innerHTML =
 detect.nextNumber;
@@ -515,7 +531,7 @@ addTerminal(
 );
 
 addTerminal(
-`Next Period : ${shortPeriod}`
+`Next Period : ${nextPeriod}`
 );
 
 addTerminal(
