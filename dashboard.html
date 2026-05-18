@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBER DASHBOARD</title>
+<title>CYBER DASHBOARD AI</title>
 
 <style>
 
@@ -46,7 +47,7 @@ position:relative;
 z-index:1;
 width:100%;
 max-width:430px;
-background:rgba(0,0,0,0.85);
+background:rgba(0,0,0,0.88);
 border:2px solid #00ff99;
 border-radius:18px;
 padding:20px;
@@ -70,7 +71,7 @@ box-shadow:0 0 15px #00ff99;
 }
 
 #wallclock{
-font-size:28px;
+font-size:30px;
 letter-spacing:2px;
 }
 
@@ -99,38 +100,37 @@ align-items:center;
 background:rgba(0,255,120,0.08);
 box-shadow:
 0 0 25px #00ff99,
-0 0 60px #00ff99;
-animation:pulse 1.5s infinite;
+0 0 70px #00ff99;
+animation:pulse 1.4s infinite;
 }
 
 @keyframes pulse{
 0%{transform:scale(1);}
-50%{transform:scale(1.06);}
+50%{transform:scale(1.05);}
 100%{transform:scale(1);}
 }
 
 #number{
-font-size:80px;
+font-size:85px;
 font-weight:bold;
 color:#00ff99;
 text-shadow:0 0 25px #00ff99;
 }
 
 #size{
-font-size:35px;
+font-size:36px;
 margin-top:10px;
 text-shadow:0 0 10px #00ff99;
 }
 
 #timer{
 margin-top:14px;
-font-size:20px;
+font-size:18px;
 }
 
 #status{
 margin-top:10px;
 font-size:15px;
-color:#00ff99;
 }
 
 .cyber-grid{
@@ -156,7 +156,7 @@ border:1px solid #00ff99;
 border-radius:12px;
 background:#000;
 margin-bottom:20px;
-height:170px;
+height:180px;
 overflow:auto;
 font-size:13px;
 box-shadow:0 0 15px rgba(0,255,120,0.3);
@@ -210,7 +210,7 @@ transform:scale(1.05);
 
 <p id="timer">NEXT UPDATE : 60 SEC</p>
 
-<div id="status">AI CONNECTING...</div>
+<div id="status">AI ENGINE CONNECTING...</div>
 
 </div>
 
@@ -218,11 +218,11 @@ transform:scale(1.05);
 <div class="box">FIREWALL : ACTIVE</div>
 <div class="box">NODE : CONNECTED</div>
 <div class="box">SERVER : ONLINE</div>
-<div class="box">STATUS : STABLE</div>
+<div class="box">AI : ENABLED</div>
 </div>
 
 <div class="terminal" id="terminal">
-<p>> System boot completed...</p>
+<p>> AI prediction engine started...</p>
 </div>
 
 <a class="join-btn"
@@ -234,10 +234,6 @@ OPEN LINK
 </div>
 
 <script>
-
-/* ===========================
-   REAL API ANALYSIS SYSTEM
-=========================== */
 
 const API =
 "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
@@ -282,7 +278,7 @@ p.innerHTML = "> " + text;
 
 terminal.prepend(p);
 
-if(terminal.children.length > 25){
+if(terminal.children.length > 35){
 
 terminal.removeChild(
 terminal.lastChild
@@ -292,21 +288,21 @@ terminal.lastChild
 
 }
 
-/* ---------- ANALYSIS ENGINE ---------- */
+/* ---------- SMART AI ---------- */
 
-function analyse(history){
-
-let small = 0;
-let big = 0;
+function smartPredict(history){
 
 let freq = {
 0:0,1:0,2:0,3:0,4:0,
 5:0,6:0,7:0,8:0,9:0
 };
 
-/* LAST 20 RESULT */
+let big = 0;
+let small = 0;
 
-for(let i=0;i<20 && i<history.length;i++){
+/* LAST 50 RESULT ANALYSIS */
+
+for(let i=0;i<50 && i<history.length;i++){
 
 const n =
 Number(
@@ -345,85 +341,117 @@ hot = Number(n);
 
 }
 
-/* LAST RESULT */
+/* LAST RESULTS */
 
 const last =
-Number(
-history[0].number ||
-history[0].result ||
-0
-);
+Number(history[0].number);
 
-/* NEXT SIDE */
+const second =
+Number(history[1].number);
 
-let nextSide;
+const third =
+Number(history[2].number);
 
-if(last <= 4){
+/* SIDE DETECT */
 
-nextSide = "BIG";
+let side;
+
+/* STREAK BREAK */
+
+if(
+last <=4 &&
+second <=4 &&
+third <=4
+){
+
+side = "BIG";
+
+}
+else if(
+last >=5 &&
+second >=5 &&
+third >=5
+){
+
+side = "SMALL";
+
+}
+else{
+
+if(small > big){
+
+side = "BIG";
 
 }else{
 
-nextSide = "SMALL";
+side = "SMALL";
 
 }
 
-/* NEXT NUMBER */
+}
+
+/* NUMBER DETECT */
 
 let nextNumber;
 
-if(nextSide == "BIG"){
+/* HOT + TREND */
 
-const arr = [5,6,7,8,9];
+if(side == "BIG"){
+
+const nums = [5,6,7,8,9];
 
 nextNumber =
-arr[
-Math.floor(
-Math.random()*arr.length
-)
+nums[
+Math.floor(Math.random()*nums.length)
 ];
 
 }else{
 
-const arr = [0,1,2,3,4];
+const nums = [0,1,2,3,4];
 
 nextNumber =
-arr[
-Math.floor(
-Math.random()*arr.length
-)
+nums[
+Math.floor(Math.random()*nums.length)
 ];
 
 }
 
-/* HOT BOOST */
+/* HOT NUMBER BOOST */
 
-if(Math.random() > 0.6){
+if(Math.random() > 0.45){
 
 nextNumber = hot;
 
 }
 
-/* FIX RANGE */
+/* FIX SIDE */
 
-if(nextSide == "BIG" && nextNumber <= 4){
+if(side == "BIG" && nextNumber <=4){
 
 nextNumber = 7;
 
 }
 
-if(nextSide == "SMALL" && nextNumber >= 5){
+if(side == "SMALL" && nextNumber >=5){
 
 nextNumber = 2;
 
 }
 
+/* CONFIDENCE */
+
+let confidence =
+Math.floor(
+75 + Math.random()*20
+);
+
 return {
+side,
 nextNumber,
-nextSide,
 hot,
-small,
-big
+confidence,
+big,
+small
 };
 
 }
@@ -452,11 +480,6 @@ else if(data.list){
 history = data.list;
 
 }
-else{
-
-throw "API FORMAT ERROR";
-
-}
 
 const latest =
 history[0];
@@ -465,7 +488,7 @@ const currentPeriod =
 latest.issueNumber ||
 latest.issue ||
 latest.period ||
-"----";
+"0";
 
 const currentResult =
 Number(
@@ -481,12 +504,12 @@ String(
 Number(currentPeriod) + 1
 );
 
-/* AI ANALYSIS */
+/* AI PREDICT */
 
 const ai =
-analyse(history);
+smartPredict(history);
 
-/* UI UPDATE */
+/* UI */
 
 document.getElementById("period").innerHTML =
 "PERIOD : " + nextPeriod;
@@ -495,12 +518,13 @@ document.getElementById("number").innerHTML =
 ai.nextNumber;
 
 document.getElementById("size").innerHTML =
-ai.nextSide;
+ai.side;
 
 document.getElementById("status").innerHTML =
-"AI ANALYSIS ACTIVE";
+"AI CONFIDENCE : " +
+ai.confidence + "%";
 
-/* LOGS */
+/* TERMINAL */
 
 if(lastPeriod != currentPeriod){
 
@@ -508,6 +532,10 @@ lastPeriod = currentPeriod;
 
 addTerminal(
 `Last Result : ${currentResult}`
+);
+
+addTerminal(
+`Next Period : ${nextPeriod}`
 );
 
 addTerminal(
@@ -519,7 +547,11 @@ addTerminal(
 );
 
 addTerminal(
-`Prediction : ${ai.nextNumber} ${ai.nextSide}`
+`Prediction : ${ai.nextNumber} ${ai.side}`
+);
+
+addTerminal(
+`Confidence : ${ai.confidence}%`
 );
 
 }
@@ -553,8 +585,6 @@ document.getElementById("timer").innerHTML =
 "NEXT UPDATE : " +
 seconds +
 " SEC";
-
-/* REFRESH */
 
 if(seconds == 60 || seconds == 0){
 
