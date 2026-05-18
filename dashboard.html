@@ -20,7 +20,7 @@ color:#00ff99;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
+min-height:100vh;
 padding:10px;
 }
 
@@ -46,7 +46,7 @@ position:relative;
 z-index:1;
 width:100%;
 max-width:430px;
-background:rgba(0,0,0,0.82);
+background:rgba(0,0,0,0.85);
 border:2px solid #00ff99;
 border-radius:18px;
 padding:20px;
@@ -56,7 +56,7 @@ backdrop-filter:blur(8px);
 }
 
 .panel h1{
-font-size:26px;
+font-size:24px;
 margin-bottom:18px;
 text-shadow:0 0 15px #00ff99;
 }
@@ -83,14 +83,15 @@ margin-bottom:18px;
 }
 
 #period{
-font-size:22px;
+font-size:20px;
 margin-bottom:18px;
+word-break:break-all;
 }
 
 .number-glow{
 margin:20px auto;
-width:130px;
-height:130px;
+width:150px;
+height:150px;
 border-radius:50%;
 display:flex;
 justify-content:center;
@@ -98,32 +99,38 @@ align-items:center;
 background:rgba(0,255,120,0.08);
 box-shadow:
 0 0 25px #00ff99,
-0 0 50px #00ff99;
+0 0 60px #00ff99;
 animation:pulse 1.5s infinite;
 }
 
 @keyframes pulse{
 0%{transform:scale(1);}
-50%{transform:scale(1.05);}
+50%{transform:scale(1.06);}
 100%{transform:scale(1);}
 }
 
 #number{
-font-size:70px;
+font-size:80px;
 font-weight:bold;
 color:#00ff99;
 text-shadow:0 0 25px #00ff99;
 }
 
 #size{
-font-size:30px;
+font-size:35px;
 margin-top:10px;
 text-shadow:0 0 10px #00ff99;
 }
 
 #timer{
 margin-top:14px;
-font-size:18px;
+font-size:20px;
+}
+
+#status{
+margin-top:10px;
+font-size:15px;
+color:#00ff99;
 }
 
 .cyber-grid{
@@ -149,7 +156,7 @@ border:1px solid #00ff99;
 border-radius:12px;
 background:#000;
 margin-bottom:20px;
-height:150px;
+height:170px;
 overflow:auto;
 font-size:13px;
 box-shadow:0 0 15px rgba(0,255,120,0.3);
@@ -174,12 +181,6 @@ transition:0.3s;
 
 .join-btn:hover{
 transform:scale(1.05);
-}
-
-#status{
-margin-top:10px;
-font-size:14px;
-color:#00ff99;
 }
 
 </style>
@@ -209,7 +210,7 @@ color:#00ff99;
 
 <p id="timer">NEXT UPDATE : 60 SEC</p>
 
-<div id="status">SERVER CONNECTING...</div>
+<div id="status">AI CONNECTING...</div>
 
 </div>
 
@@ -234,12 +235,16 @@ OPEN LINK
 
 <script>
 
+/* ===========================
+   REAL API ANALYSIS SYSTEM
+=========================== */
+
 const API =
 "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
 
-let historyData = [];
+let lastPeriod = "";
 
-/* ---------------- CLOCK ---------------- */
+/* ---------- CLOCK ---------- */
 
 function updateClock(){
 
@@ -263,171 +268,307 @@ document.getElementById("wallclock").innerHTML =
 
 }
 
-/* ---------------- TERMINAL ---------------- */
+/* ---------- TERMINAL ---------- */
 
-function addTerminal(msg){
+function addTerminal(text){
 
 const terminal =
 document.getElementById("terminal");
 
-const p = document.createElement("p");
+const p =
+document.createElement("p");
 
-p.innerHTML = "> " + msg;
+p.innerHTML = "> " + text;
 
 terminal.prepend(p);
 
-if(terminal.children.length > 20){
-terminal.removeChild(terminal.lastChild);
+if(terminal.children.length > 25){
+
+terminal.removeChild(
+terminal.lastChild
+);
+
+}
+
+}
+
+/* ---------- ANALYSIS ENGINE ---------- */
+
+function analyse(history){
+
+let small = 0;
+let big = 0;
+
+let freq = {
+0:0,1:0,2:0,3:0,4:0,
+5:0,6:0,7:0,8:0,9:0
+};
+
+/* LAST 20 RESULT */
+
+for(let i=0;i<20 && i<history.length;i++){
+
+const n =
+Number(
+history[i].number ||
+history[i].result ||
+0
+);
+
+freq[n]++;
+
+if(n <= 4){
+
+small++;
+
+}else{
+
+big++;
+
 }
 
 }
 
-/* ---------------- API FETCH ---------------- */
+/* HOT NUMBER */
 
-async function fetchResult(){
+let hot = 0;
+let max = 0;
+
+for(let n in freq){
+
+if(freq[n] > max){
+
+max = freq[n];
+hot = Number(n);
+
+}
+
+}
+
+/* LAST RESULT */
+
+const last =
+Number(
+history[0].number ||
+history[0].result ||
+0
+);
+
+/* NEXT SIDE */
+
+let nextSide;
+
+if(last <= 4){
+
+nextSide = "BIG";
+
+}else{
+
+nextSide = "SMALL";
+
+}
+
+/* NEXT NUMBER */
+
+let nextNumber;
+
+if(nextSide == "BIG"){
+
+const arr = [5,6,7,8,9];
+
+nextNumber =
+arr[
+Math.floor(
+Math.random()*arr.length
+)
+];
+
+}else{
+
+const arr = [0,1,2,3,4];
+
+nextNumber =
+arr[
+Math.floor(
+Math.random()*arr.length
+)
+];
+
+}
+
+/* HOT BOOST */
+
+if(Math.random() > 0.6){
+
+nextNumber = hot;
+
+}
+
+/* FIX RANGE */
+
+if(nextSide == "BIG" && nextNumber <= 4){
+
+nextNumber = 7;
+
+}
+
+if(nextSide == "SMALL" && nextNumber >= 5){
+
+nextNumber = 2;
+
+}
+
+return {
+nextNumber,
+nextSide,
+hot,
+small,
+big
+};
+
+}
+
+/* ---------- FETCH API ---------- */
+
+async function fetchGame(){
 
 try{
 
-document.getElementById("status").innerHTML =
-"SERVER CONNECTED";
+const response =
+await fetch(API);
 
-const res = await fetch(API);
+const data =
+await response.json();
 
-const data = await res.json();
-
-console.log(data);
-
-let list = [];
-
-/* AUTO DETECT RESPONSE */
+let history = [];
 
 if(data.data && data.data.list){
-list = data.data.list;
+
+history = data.data.list;
+
 }
 else if(data.list){
-list = data.list;
+
+history = data.list;
+
 }
 else{
-throw new Error("API FORMAT ERROR");
+
+throw "API FORMAT ERROR";
+
 }
 
-historyData = list;
+const latest =
+history[0];
 
-const latest = list[0];
-
-const issue =
+const currentPeriod =
 latest.issueNumber ||
 latest.issue ||
 latest.period ||
 "----";
 
-const number =
+const currentResult =
 Number(
 latest.number ||
 latest.result ||
 0
 );
 
+/* NEXT PERIOD */
+
+const nextPeriod =
+String(
+Number(currentPeriod) + 1
+);
+
+/* AI ANALYSIS */
+
+const ai =
+analyse(history);
+
+/* UI UPDATE */
+
 document.getElementById("period").innerHTML =
-"PERIOD : " + issue;
+"PERIOD : " + nextPeriod;
 
 document.getElementById("number").innerHTML =
-number;
-
-if(number <= 4){
+ai.nextNumber;
 
 document.getElementById("size").innerHTML =
-"SMALL";
-
-}else{
-
-document.getElementById("size").innerHTML =
-"BIG";
-
-}
-
-/* PREDICTION */
-
-const prediction = analyseTrend(list);
-
-addTerminal(
-`Result : ${number} | Prediction : ${prediction}`
-);
-
-}
-catch(err){
-
-console.log(err);
+ai.nextSide;
 
 document.getElementById("status").innerHTML =
-"API ERROR";
+"AI ANALYSIS ACTIVE";
 
-addTerminal("API CONNECTION FAILED");
+/* LOGS */
 
-}
+if(lastPeriod != currentPeriod){
 
-}
+lastPeriod = currentPeriod;
 
-/* ---------------- ANALYSIS ---------------- */
-
-function analyseTrend(list){
-
-let small = 0;
-let big = 0;
-
-for(let i = 0; i < Math.min(10,list.length); i++){
-
-const n =
-Number(
-list[i].number ||
-list[i].result ||
-0
+addTerminal(
+`Last Result : ${currentResult}`
 );
 
-if(n <= 4){
-small++;
-}else{
-big++;
-}
+addTerminal(
+`Hot Number : ${ai.hot}`
+);
+
+addTerminal(
+`Big : ${ai.big} | Small : ${ai.small}`
+);
+
+addTerminal(
+`Prediction : ${ai.nextNumber} ${ai.nextSide}`
+);
 
 }
 
-if(small > big){
-return "BIG";
 }
-else if(big > small){
-return "SMALL";
-}
-else{
-return "RANDOM";
-}
+catch(error){
+
+console.log(error);
+
+document.getElementById("status").innerHTML =
+"SERVER ERROR";
+
+addTerminal(
+"API CONNECTION FAILED"
+);
 
 }
 
-/* ---------------- TIMER ---------------- */
+}
+
+/* ---------- TIMER ---------- */
 
 function updateTimer(){
 
 const now = new Date();
 
-const sec = 60 - now.getSeconds();
+const seconds =
+60 - now.getSeconds();
 
 document.getElementById("timer").innerHTML =
-"NEXT UPDATE : " + sec + " SEC";
+"NEXT UPDATE : " +
+seconds +
+" SEC";
 
-if(sec === 60 || sec === 0){
+/* REFRESH */
 
-fetchResult();
+if(seconds == 60 || seconds == 0){
+
+fetchGame();
 
 }
 
 }
 
-/* ---------------- START ---------------- */
+/* ---------- START ---------- */
 
 updateClock();
 updateTimer();
-fetchResult();
+fetchGame();
 
 setInterval(updateClock,1000);
 setInterval(updateTimer,1000);
