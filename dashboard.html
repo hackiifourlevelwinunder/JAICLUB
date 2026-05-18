@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBER DASHBOARD AI</title>
+<title>CYBER DASHBOARD</title>
 
 <style>
 
@@ -49,88 +49,94 @@ width:100%;
 max-width:430px;
 background:rgba(0,0,0,0.88);
 border:2px solid #00ff99;
-border-radius:18px;
+border-radius:20px;
 padding:20px;
-box-shadow:0 0 25px #00ff99;
+box-shadow:0 0 30px #00ff99;
 text-align:center;
 backdrop-filter:blur(8px);
 }
 
 .panel h1{
-font-size:24px;
+font-size:26px;
 margin-bottom:18px;
-text-shadow:0 0 15px #00ff99;
+text-shadow:0 0 18px #00ff99;
 }
 
 .clock-box{
-padding:14px;
+padding:15px;
 border:1px solid #00ff99;
-border-radius:12px;
+border-radius:14px;
 margin-bottom:18px;
-box-shadow:0 0 15px #00ff99;
+box-shadow:0 0 18px #00ff99;
 }
 
 #wallclock{
-font-size:30px;
+font-size:34px;
 letter-spacing:2px;
+font-weight:bold;
 }
 
 .period-card{
-padding:20px;
+padding:22px;
 border:1px solid #00ff99;
-border-radius:16px;
-box-shadow:0 0 20px rgba(0,255,150,0.5);
+border-radius:18px;
+box-shadow:0 0 25px rgba(0,255,150,0.6);
 margin-bottom:18px;
 }
 
 #period{
-font-size:20px;
-margin-bottom:18px;
+font-size:22px;
+margin-bottom:20px;
 word-break:break-all;
+font-weight:bold;
 }
 
 .number-glow{
 margin:20px auto;
-width:150px;
-height:150px;
+width:170px;
+height:170px;
 border-radius:50%;
 display:flex;
 justify-content:center;
 align-items:center;
 background:rgba(0,255,120,0.08);
 box-shadow:
-0 0 25px #00ff99,
-0 0 70px #00ff99;
-animation:pulse 1.4s infinite;
+0 0 30px #00ff99,
+0 0 90px #00ff99;
+animation:pulse 1.5s infinite;
 }
 
 @keyframes pulse{
 0%{transform:scale(1);}
-50%{transform:scale(1.05);}
+50%{transform:scale(1.06);}
 100%{transform:scale(1);}
 }
 
 #number{
-font-size:85px;
+font-size:95px;
 font-weight:bold;
 color:#00ff99;
-text-shadow:0 0 25px #00ff99;
+text-shadow:0 0 35px #00ff99;
 }
 
 #size{
-font-size:36px;
-margin-top:10px;
-text-shadow:0 0 10px #00ff99;
+font-size:45px;
+margin-top:12px;
+font-weight:bold;
+text-shadow:0 0 18px #00ff99;
 }
 
 #timer{
-margin-top:14px;
-font-size:18px;
+margin-top:18px;
+font-size:22px;
+font-weight:bold;
 }
 
 #status{
-margin-top:10px;
-font-size:15px;
+margin-top:12px;
+font-size:18px;
+font-weight:bold;
+text-shadow:0 0 12px #00ff99;
 }
 
 .cyber-grid{
@@ -141,41 +147,44 @@ margin-bottom:18px;
 }
 
 .box{
-padding:14px;
+padding:16px;
 border:1px solid #00ff99;
-border-radius:12px;
+border-radius:14px;
 background:rgba(0,255,120,0.06);
-font-size:14px;
-box-shadow:0 0 10px rgba(0,255,120,0.4);
+font-size:16px;
+font-weight:bold;
+box-shadow:0 0 12px rgba(0,255,120,0.5);
 }
 
 .terminal{
 text-align:left;
 padding:15px;
 border:1px solid #00ff99;
-border-radius:12px;
+border-radius:14px;
 background:#000;
 margin-bottom:20px;
 height:180px;
 overflow:auto;
-font-size:13px;
-box-shadow:0 0 15px rgba(0,255,120,0.3);
+font-size:14px;
+box-shadow:0 0 18px rgba(0,255,120,0.4);
 }
 
 .terminal p{
 margin-bottom:8px;
 color:#00ff99;
+font-weight:bold;
 }
 
 .join-btn{
 display:inline-block;
-padding:14px 28px;
-border-radius:12px;
+padding:15px 30px;
+border-radius:14px;
 background:#00ff99;
 color:#000;
 font-weight:bold;
 text-decoration:none;
-box-shadow:0 0 20px #00ff99;
+font-size:18px;
+box-shadow:0 0 22px #00ff99;
 transition:0.3s;
 }
 
@@ -210,7 +219,7 @@ transform:scale(1.05);
 
 <p id="timer">NEXT UPDATE : 60 SEC</p>
 
-<div id="status">AI ENGINE CONNECTING...</div>
+<div id="status">HIGH DETECT ACTIVE</div>
 
 </div>
 
@@ -218,11 +227,11 @@ transform:scale(1.05);
 <div class="box">FIREWALL : ACTIVE</div>
 <div class="box">NODE : CONNECTED</div>
 <div class="box">SERVER : ONLINE</div>
-<div class="box">AI : ENABLED</div>
+<div class="box">SYSTEM : STABLE</div>
 </div>
 
 <div class="terminal" id="terminal">
-<p>> AI prediction engine started...</p>
+<p>> High detect engine started...</p>
 </div>
 
 <a class="join-btn"
@@ -278,7 +287,7 @@ p.innerHTML = "> " + text;
 
 terminal.prepend(p);
 
-if(terminal.children.length > 35){
+if(terminal.children.length > 30){
 
 terminal.removeChild(
 terminal.lastChild
@@ -288,9 +297,9 @@ terminal.lastChild
 
 }
 
-/* ---------- SMART AI ---------- */
+/* ---------- HIGH DETECT ---------- */
 
-function smartPredict(history){
+function highDetect(history){
 
 let freq = {
 0:0,1:0,2:0,3:0,4:0,
@@ -300,7 +309,7 @@ let freq = {
 let big = 0;
 let small = 0;
 
-/* LAST 50 RESULT ANALYSIS */
+/* LAST 50 RESULTS */
 
 for(let i=0;i<50 && i<history.length;i++){
 
@@ -356,8 +365,6 @@ Number(history[2].number);
 
 let side;
 
-/* STREAK BREAK */
-
 if(
 last <=4 &&
 second <=4 &&
@@ -390,11 +397,9 @@ side = "SMALL";
 
 }
 
-/* NUMBER DETECT */
+/* NUMBER */
 
 let nextNumber;
-
-/* HOT + TREND */
 
 if(side == "BIG"){
 
@@ -416,15 +421,15 @@ Math.floor(Math.random()*nums.length)
 
 }
 
-/* HOT NUMBER BOOST */
+/* HOT BOOST */
 
-if(Math.random() > 0.45){
+if(Math.random() > 0.40){
 
 nextNumber = hot;
 
 }
 
-/* FIX SIDE */
+/* FIX */
 
 if(side == "BIG" && nextNumber <=4){
 
@@ -438,25 +443,17 @@ nextNumber = 2;
 
 }
 
-/* CONFIDENCE */
-
-let confidence =
-Math.floor(
-75 + Math.random()*20
-);
-
 return {
 side,
 nextNumber,
 hot,
-confidence,
 big,
 small
 };
 
 }
 
-/* ---------- FETCH API ---------- */
+/* ---------- FETCH ---------- */
 
 async function fetchGame(){
 
@@ -499,15 +496,31 @@ latest.result ||
 
 /* NEXT PERIOD */
 
+const now = new Date();
+
+let yyyy = now.getFullYear();
+let mm = String(now.getMonth()+1).padStart(2,'0');
+let dd = String(now.getDate()).padStart(2,'0');
+
+let hh = String(now.getHours()).padStart(2,'0');
+
+let min = now.getMinutes() + 1;
+
+if(min >= 60){
+
+min = 0;
+
+}
+
+min = String(min).padStart(2,'0');
+
 const nextPeriod =
-String(
-Number(currentPeriod) + 1
-);
+`${yyyy}${mm}${dd}1000${hh}${min}`;
 
-/* AI PREDICT */
+/* DETECT */
 
-const ai =
-smartPredict(history);
+const detect =
+highDetect(history);
 
 /* UI */
 
@@ -515,14 +528,10 @@ document.getElementById("period").innerHTML =
 "PERIOD : " + nextPeriod;
 
 document.getElementById("number").innerHTML =
-ai.nextNumber;
+detect.nextNumber;
 
 document.getElementById("size").innerHTML =
-ai.side;
-
-document.getElementById("status").innerHTML =
-"AI CONFIDENCE : " +
-ai.confidence + "%";
+detect.side;
 
 /* TERMINAL */
 
@@ -539,19 +548,15 @@ addTerminal(
 );
 
 addTerminal(
-`Hot Number : ${ai.hot}`
+`Hot Number : ${detect.hot}`
 );
 
 addTerminal(
-`Big : ${ai.big} | Small : ${ai.small}`
+`Big : ${detect.big} | Small : ${detect.small}`
 );
 
 addTerminal(
-`Prediction : ${ai.nextNumber} ${ai.side}`
-);
-
-addTerminal(
-`Confidence : ${ai.confidence}%`
+`Prediction : ${detect.nextNumber} ${detect.side}`
 );
 
 }
