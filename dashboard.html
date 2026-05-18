@@ -295,12 +295,13 @@ function getNextPeriod(){
 
 const now = new Date();
 
-let hour = now.getHours();
-let minute = now.getMinutes();
+let minute =
+now.getMinutes();
 
 /*
-11:32 = 32 + 1051 = 1083
-11:20 = 20 + 1051 = 1071
+11:35 = 1086
+FORMULA:
+1051 + minute
 */
 
 let period =
@@ -308,13 +309,11 @@ let period =
 
 /* NEXT */
 
-period = period + 1;
-
 return String(period);
 
 }
 
-/* HIGH DETECT */
+/* HIGH ANALYSIS */
 
 function highDetect(history){
 
@@ -326,7 +325,12 @@ let freq = {
 let big = 0;
 let small = 0;
 
-for(let i=0;i<50 && i<history.length;i++){
+let streakBig = 0;
+let streakSmall = 0;
+
+/* LAST 80 RESULT */
+
+for(let i=0;i<80 && i<history.length;i++){
 
 const n =
 Number(
@@ -349,6 +353,44 @@ big++;
 
 }
 
+/* STREAK */
+
+for(let i=0;i<5;i++){
+
+const n =
+Number(history[i].number);
+
+if(n <=4){
+
+streakSmall++;
+
+}else{
+
+break;
+
+}
+
+}
+
+for(let i=0;i<5;i++){
+
+const n =
+Number(history[i].number);
+
+if(n >=5){
+
+streakBig++;
+
+}else{
+
+break;
+
+}
+
+}
+
+/* HOT NUMBER */
+
 let hot = 0;
 let max = 0;
 
@@ -366,28 +408,16 @@ hot = Number(n);
 const last =
 Number(history[0].number);
 
-const second =
-Number(history[1].number);
-
-const third =
-Number(history[2].number);
+/* SIDE ANALYSIS */
 
 let side;
 
-if(
-last <=4 &&
-second <=4 &&
-third <=4
-){
+if(streakSmall >=3){
 
 side = "BIG";
 
 }
-else if(
-last >=5 &&
-second >=5 &&
-third >=5
-){
+else if(streakBig >=3){
 
 side = "SMALL";
 
@@ -405,6 +435,8 @@ side = "SMALL";
 }
 
 }
+
+/* NUMBER */
 
 let nextNumber;
 
@@ -428,11 +460,15 @@ Math.floor(Math.random()*nums.length)
 
 }
 
-if(Math.random() > 0.40){
+/* HOT BOOST */
+
+if(Math.random() > 0.30){
 
 nextNumber = hot;
 
 }
+
+/* FIX */
 
 if(side == "BIG" && nextNumber <=4){
 
@@ -446,12 +482,23 @@ nextNumber = 2;
 
 }
 
+/* REPEAT FILTER */
+
+if(nextNumber == last){
+
+nextNumber =
+(nextNumber + 1) % 10;
+
+}
+
 return {
 side,
 nextNumber,
 hot,
 big,
-small
+small,
+streakBig,
+streakSmall
 };
 
 }
@@ -504,7 +551,7 @@ latest.result ||
 const nextPeriod =
 getNextPeriod();
 
-/* DETECT */
+/* ANALYSIS */
 
 const detect =
 highDetect(history);
